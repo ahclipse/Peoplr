@@ -1,10 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Peoplr</string>
 
+    <string name="app_name">Peoplr</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">closed</string>
+    <string name="tag">tag</string>
 
     <string-array name="fragment_names">
         <item>Home</item>
@@ -12,4 +14,8 @@
         <item>Matches</item>
         <item>Settings</item>
     </string-array>
+
+    <string name="title_activity_tinder_profile">TinderProfile</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -3,6 +3,8 @@ package com.example.ahaag.peoplr;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,12 +18,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+//CHANGE IT TO FRAGMENT
 public class TinderProfile extends Activity implements AdapterView.OnItemClickListener{
     final String drawerTitle= "Navigation";
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
+    ///ADDED THESE BEAST
+//    MyAdapter mAdapter;
+//    ViewPager mPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,12 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         Intent i=getIntent();
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
+
+//        ADDED THIS TOO
+//        mAdapter=new MyAdapter (getSupportFragmentManager());
+//        mPager=(ViewPager) findViewById(R.id.swipe_layout);
+//        mPager.setAdapter(mAdapter);
+
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

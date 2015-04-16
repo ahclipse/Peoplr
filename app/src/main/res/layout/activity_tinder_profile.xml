@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#aaaa">
 
+
 <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
@@ -62,3 +63,4 @@
         android:background="#111"/>
 
 </android.support.v4.widget.DrawerLayout>
+<!--</android.support.v4.view.ViewPager>-->

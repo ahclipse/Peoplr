@@ -2,15 +2,20 @@ package com.example.ahaag.peoplr;
 
 //lolololol butts
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 //MOAR BUTTS
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener{
@@ -20,6 +25,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
+    TextView textview;
+    ListView listview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +34,40 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         setContentView(R.layout.activity_main);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+
+
+        //CROSSYOUR FINGERS AND PRAY
+
+        listview = (ListView) findViewById(R.id.fragmentContainer);
+        String[] values = new String[] { "Cooking", "Running", "Knitting",
+                "Basketball", "Sleeping", "Swimming", "Biking", "Soccer", "Reading", "Eating" };
+        final ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < values.length; ++i) {
+            list.add(values[i]);
+        }
+
+
+
+         ArrayAdapter adapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, list);
+        listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+//                Toast.makeText(getApplicationContext(),
+//                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
+//                        .show();
+                   String tag=list.get(position);
+                Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
+                nextScreen.putExtra("tag", tag);
+                startActivity(nextScreen);
+            }
+        });
+
+
+
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
