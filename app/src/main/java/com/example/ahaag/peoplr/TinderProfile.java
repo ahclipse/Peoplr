@@ -16,6 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.andtinder.model.CardModel;
+import com.andtinder.model.Orientations;
+import com.andtinder.view.CardContainer;
+import com.andtinder.view.SimpleCardStackAdapter;
+
 import java.util.ArrayList;
 
 //CHANGE IT TO FRAGMENT
@@ -25,7 +31,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
-    ///ADDED THESE BEAST
+    CardContainer mCardContainer;
+     ///ADDED THESE BEAST
 //    MyAdapter mAdapter;
 //    ViewPager mPager;
 
@@ -42,10 +49,13 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
 
-//        ADDED THIS TOO
-//        mAdapter=new MyAdapter (getSupportFragmentManager());
-//        mPager=(ViewPager) findViewById(R.id.swipe_layout);
-//        mPager.setAdapter(mAdapter);
+        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
+        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
+        CardModel card = new CardModel("Title1", "Description goes here", getDrawable(R.drawable.picture1));
+        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
+        adapter.add(new CardModel("Title1", "Description goes here", getDrawable(R.drawable.picture1)));
+        adapter.add(new CardModel("Title1", "Description goes here", getDrawable(R.drawable.picture1)));
+        mCardContainer.setAdapter(adapter);
 
 
         // Set the drawer toggle as the DrawerListener
