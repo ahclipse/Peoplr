@@ -3,8 +3,6 @@ package com.example.ahaag.peoplr;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,67 +13,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.andtinder.model.CardModel;
-import com.andtinder.model.Orientations;
-import com.andtinder.view.CardContainer;
-import com.andtinder.view.SimpleCardStackAdapter;
 
-import java.util.ArrayList;
-
-//CHANGE IT TO FRAGMENT
-public class TinderProfile extends Activity implements AdapterView.OnItemClickListener{
+public class Matches extends Activity implements AdapterView.OnItemClickListener{
     final String drawerTitle= "Navigation";
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
-    CardContainer mCardContainer;
-     ///ADDED THESE BEAST
-//    MyAdapter mAdapter;
-//    ViewPager mPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tinder_profile);
+        setContentView(R.layout.activity_matches);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-        setContentView(R.layout.activity_tinder_profile);
-
-        TextView tagtext=(TextView) findViewById(R.id.tagtext);
-        Intent i=getIntent();
-        String tag=i.getStringExtra("tag");
-        tagtext.setText(tag);
-
-        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
-        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
-        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
-        adapter.add(new CardModel("Bobby Smith", "Hello, my name is Bobby. I just moved from " +
-                "Chicago and I don't know many people in the area. This is an activity I enjoy doing" +
-                "with lots of people so please don't hesitate to contact me if you are interested." +
-                "I look forward to meeting you.", getDrawable(R.drawable.picture1)));
-        adapter.add(new CardModel("Mary Miller", "Hey, how it going? I did this a lot as a kid but none of " +
-                "my friends are interested in doing it with me. I am a friendly person who loves to have " +
-                "fun.", getDrawable(R.drawable.picture2)));
-        adapter.add(new CardModel("Nathan Simin", "I am very shy but I am quite good at this. I am very quiet and calm" +
-                "and a nice person to hang out with. Please contact me.", getDrawable(R.drawable.picture3)));
-        adapter.add(new CardModel("Susan Bouda", "Hey! I am senior at uw madison. I am studying wildlife ecology" +
-                "and I love being outside. I love to laugh and hang out with my friends. I can be loud sometimes" +
-                "but I can be quiet too.", getDrawable(R.drawable.picture2)));
-        adapter.add(new CardModel("Mark Laeney", "Hello. My name is Mark. I am a freshmen who just moved here" +
-                "from Arizona. I love Wisconsin so far but I don't know a lot of people. Let me know if" +
-                "you want to meet me. I love forward to meeting you.", getDrawable(R.drawable.picture3)));
-        adapter.add(new CardModel("Charlie Martin", "This is just one of the many things I love to do. I also love" +
-                "to swim and dance and play the harmonica. ", getDrawable(R.drawable.picture1)));
-        adapter.add(new CardModel("George Thomas", "My name is George. I am a nice guy.", getDrawable(R.drawable.picture2)));
-        adapter.add(new CardModel("Nick Boots", "Hello everyone! My name is Nick. I was born in Idaho" +
-                "and moved here when I was six. I am trying to branch out and try new things and meet new" +
-                "people.", getDrawable(R.drawable.picture1)));
-        mCardContainer.setAdapter(adapter);
-
-
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -110,6 +62,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
     }
 
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -134,6 +87,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         return super.onOptionsItemSelected(item);
     }
+
     //onItemClick to handle placement of title on drawer
     @Override
     public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -156,4 +110,5 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             startActivity(nextScreen);
         }
     }
+
 }

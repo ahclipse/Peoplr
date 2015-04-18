@@ -12,10 +12,12 @@
         <item>Home</item>
         <item>My Profile</item>
         <item>Matches</item>
-        <item>Settings</item>
+        <item>Map</item>
     </string-array>
 
-    <string name="title_activity_tinder_profile">TinderProfile</string>
+    <string name="title_activity_tinder_profile">Profiles</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_my_profile">MyProfile</string>
+    <string name="title_activity_matches">Matches</string>
 
 </resources>

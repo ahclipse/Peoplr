@@ -24,6 +24,14 @@
         android:id="@+id/layoutview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="There are no more profiles"
+        android:layout_alignBaseline="@+id/layoutview"
+        android:layout_alignBottom="@+id/layoutview"
+        android:layout_centerHorizontal="true" />
     <!--<TextView-->
         <!--android:id="@+id/username"-->
         <!--android:layout_width="wrap_content"-->

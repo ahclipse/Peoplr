@@ -132,6 +132,22 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         getActionBar().setTitle(fragmentNames[position]);
         drawerLayout.closeDrawer(drawerList);
+        if (position==0){
+            Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(nextScreen);
+        }
+        if (position==1){
+            Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
+            startActivity(nextScreen);
+        }
+        if (position==2){
+            Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
+            startActivity(nextScreen);
+        }
+        if (position==3){
+            Intent nextScreen = new Intent(getApplicationContext(), Map.class);
+            startActivity(nextScreen);
+        }
     }
 
 }
