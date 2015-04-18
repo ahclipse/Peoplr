@@ -20,7 +20,7 @@ import android.widget.ListView;
 
 
 
-public class MapsActivity extends FragmentActivity implements AdapterView.OnItemClickListener{
+public class Map extends FragmentActivity implements AdapterView.OnItemClickListener{
     final String drawerTitle= "Navigation";
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
