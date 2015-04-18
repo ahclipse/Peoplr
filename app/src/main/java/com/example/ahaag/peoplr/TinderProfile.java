@@ -152,7 +152,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             startActivity(nextScreen);
         }
         if (position==3){
-            Intent nextScreen = new Intent(getApplicationContext(), Map.class);
+            Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(nextScreen);
         }
     }

@@ -107,7 +107,7 @@ public void onItemClick(AdapterView parent, View view, int position, long id) {
         startActivity(nextScreen);
         }
         if (position==3){
-        Intent nextScreen = new Intent(getApplicationContext(), Map.class);
+        Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
         startActivity(nextScreen);
         }
         }
