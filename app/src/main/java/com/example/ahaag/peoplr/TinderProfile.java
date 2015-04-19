@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andtinder.model.CardModel;
 import com.andtinder.model.Orientations;
@@ -44,7 +45,11 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         getActionBar().setHomeButtonEnabled(true);
         setContentView(R.layout.activity_tinder_profile);
 
-        TextView tagtext=(TextView) findViewById(R.id.tagtext);
+        Toast.makeText(getApplicationContext(),
+                        "Swipe right to like and left to dislike", Toast.LENGTH_LONG)
+                       .show();
+
+                TextView tagtext = (TextView) findViewById(R.id.tagtext);
         Intent i=getIntent();
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
