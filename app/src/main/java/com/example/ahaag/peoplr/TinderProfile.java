@@ -54,6 +54,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
 
+        //Fix to work on lower APKs?
         Resources r = getResources();
 
         mCardContainer = (CardContainer) findViewById(R.id.layoutview);
