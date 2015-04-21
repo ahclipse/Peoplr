@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.ahaag.peoplr"
-        minSdkVersion 21 //changed from 17
+        minSdkVersion 17 //changed from 17
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -24,7 +24,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
     compile project(':AndTinder')
     compile 'com.google.android.gms:play-services:7.0.0'
 }
