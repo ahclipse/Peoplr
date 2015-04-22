@@ -7,6 +7,7 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">closed</string>
     <string name="tag">tag</string>
+    <string name="facebook_app_id">403523446493559</string>
 
     <string-array name="fragment_names">
         <item>Home</item>
@@ -22,6 +23,7 @@
     <string name="title_activity_matches">Matches</string>
 
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_fblogin">fblogin</string>
 
 
 </resources>
