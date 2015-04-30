@@ -27,6 +27,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ListView drawerList;
     TextView textview;
     ListView listview;
+    UserProfile cr;
+    ArrayList tag1;
+    ArrayList tag2;
+    ArrayList tag3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +39,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
+        Intent j=getIntent();
+        cr =j.getParcelableExtra("currUser");
+        tag1=j.getParcelableArrayListExtra("tag1");
+        tag2=j.getParcelableArrayListExtra("tag2");
+        tag3=j.getParcelableArrayListExtra("tag3");
 
         //CROSSYOUR FINGERS AND PRAY
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
-        String[] values = new String[] { "Cooking", "Running", "Knitting",
-                "Basketball", "Sleeping", "Swimming", "Biking", "Soccer", "Reading", "Eating" };
+        String[] values = new String[] { "Cooking", "Running", "Knitting",};
+               // "Basketball", "Sleeping", "Swimming", "Biking", "Soccer", "Reading", "Eating" };
         final ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < values.length; ++i) {
             list.add(values[i]);
@@ -62,6 +71,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                    String tag=list.get(position);
                 Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
                 nextScreen.putExtra("tag", tag);
+                nextScreen.putExtra("pos", position);
+                Bundle b = new Bundle();
+                b.putParcelable("currUser", cr);
+                b.putParcelableArrayList("tag1", tag1);
+                b.putParcelableArrayList("tag2", tag2);
+                b.putParcelableArrayList("tag3", tag3);
+                nextScreen.putExtras(b);
                 startActivity(nextScreen);
             }
         });
@@ -138,6 +154,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
         if (position==1){
             Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
+            Bundle b = new Bundle();
+            b.putParcelable("currUser", cr);
+            nextScreen.putExtras(b);
             startActivity(nextScreen);
         }
         if (position==2){

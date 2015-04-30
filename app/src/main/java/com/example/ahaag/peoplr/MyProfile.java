@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 
 public class MyProfile extends Activity implements AdapterView.OnItemClickListener{
@@ -21,6 +22,7 @@ final String drawerTitle= "Navigation";
         ActionBarDrawerToggle drawerToggle;
         String[] fragmentNames;
         ListView drawerList;
+        UserProfile cr;
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,15 @@ protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_my_profile);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+
+    Intent j=getIntent();
+    cr =j.getParcelableExtra("currUser");
+    TextView username = (TextView) findViewById(R.id.username);
+    username.setText(cr.getName());
+    TextView contactInfo=(TextView) findViewById(R.id.contactInfo);
+    contactInfo.setText(cr.getContactInfo());
+    TextView description=(TextView) findViewById(R.id.description);
+    description.setText(cr.getDescription());
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -14,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 
 public class Matches extends Activity implements AdapterView.OnItemClickListener{
     final String drawerTitle= "Navigation";
@@ -21,6 +23,7 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
+    ListView listview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,16 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         setContentView(R.layout.activity_matches);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+
+        ArrayList<String> values=new ArrayList<String>();
+        values. add("bobby Miller");
+        values.add("Joan Smith");
+
+        listview = (ListView) findViewById(R.id.fragmentContainer);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.label, values);
+        listview.setAdapter(adapter);
+
+
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
