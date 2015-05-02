@@ -18,17 +18,17 @@ public class UserProfile implements Parcelable {
     private String contactInfo;
     private String description;
     //private location??
-    private ArrayList <UserProfile> matches;
+    ArrayList <UserProfile> matches;
     private Drawable image;
 
 
 
-    public UserProfile(String n, String c, String d, ArrayList m, Drawable i){
+    public UserProfile(String n, String c, String d, ArrayList m){//Need to add image
          name=n;
          contactInfo=c;
          description=d;
           matches=m;
-        image=i;
+       // image=i;
     }
     String getName (){
         return name;
@@ -39,8 +39,11 @@ public class UserProfile implements Parcelable {
     String getDescription(){
        return description;
     }
-    ArrayList getMatches() {
+   ArrayList getMatches() {
         return matches;
+    }
+    void setMatches(ArrayList m){
+        matches=m;
     }
 
 
@@ -58,6 +61,7 @@ public class UserProfile implements Parcelable {
         bundle.putString("contactInfo", contactInfo);
         bundle.putString("description", description);
         bundle.putParcelableArrayList("matches", matches);
+        //bundle.setClassLoader(LocationType.class.getClassLoader());
         //NEED TO ADD IMage
         //dest.writeString(name);
        // dest.writeString(contactInfo);
@@ -75,7 +79,7 @@ public class UserProfile implements Parcelable {
             // instantiate a person using values from the bundle
             return new UserProfile(bundle.getString("name"),
                     bundle.getString("contactInfo"),bundle.getString("description"),
-                    bundle.getParcelableArrayList("matches"), null);
+                    bundle.getParcelableArrayList("matches"));
         }
 
         @Override

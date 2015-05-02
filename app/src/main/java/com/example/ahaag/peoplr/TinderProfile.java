@@ -38,9 +38,12 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 //    MyAdapter mAdapter;
 //    ViewPager mPager;
      UserProfile cr;
-    ArrayList tag1;
-    ArrayList tag2;
-    ArrayList tag3;
+//    ArrayList tag1;
+//    ArrayList tag2;
+//    ArrayList tag3;
+    ArrayList <UserProfile> tags;
+    startUp s;
+    int pos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +61,15 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         Intent i=getIntent();
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
-        cr=i.getParcelableExtra("currUser");
-        tag1=i.getParcelableArrayListExtra("tag1");
-         tag2=i.getParcelableArrayListExtra("tag2");
-        tag3=i.getParcelableArrayListExtra("tag3");
-        int pos =i.getIntExtra("pos",0);
+         s=((startUp)getApplicationContext());
+        cr=s.getCurrUser();
+        pos =i.getIntExtra("pos",0);
+        tags=s.getTagList(pos);
+//        cr=i.getParcelableExtra("currUser");
+//        tag1=i.getParcelableArrayListExtra("tag1");
+//         tag2=i.getParcelableArrayListExtra("tag2");
+//        tag3=i.getParcelableArrayListExtra("tag3");
+
 
 
 
@@ -75,38 +82,98 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         mCardContainer.setOrientation(Orientations.Orientation.Disordered);
         SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
 
-        if (pos==0){
-            for (int j=0;j<tag1.size();j++){
-                UserProfile u=(UserProfile)tag1.get(j);
+//        if (pos==0){
+            for (int j=0;j<tags.size();j++){
+                UserProfile u=(UserProfile)tags.get(j);
                 CardModel card=new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture1));
-                card.setOnCardDimissedListener(new CardModel.OnCardDismissedListener() {
-                   // @Override
+//                card.setOnClickListener(new CardModel.OnClickListener() {
+//                    @Override
+//                    public void OnClickListener() {
+//                        Log.i("Swipeable Cards","I am pressing the card");
+//                    }
+//                });
+                card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
+                    @Override
                     public void onLike() {
-                       // Log.d("Swipeable Card", "I liked it");
-                        tag1.remove(0);
+                        //Log.i("Swipeable Cards","I like the card");
+                        Toast.makeText(getApplicationContext(),
+                                "Liked", Toast.LENGTH_LONG)
+                                .show();
+
+                        UserProfile p=(UserProfile)tags.remove(0);
+
+                        cr.matches.add(p);
                     }
 
-                    //  @Override
+                    @Override
                     public void onDislike() {
-                        // Log.d("Swipeable Card", "I did not liked it");
-                        tag1.remove(0);
+                       // Log.i("Swipeable Cards","I dislike the card");
+                        Toast.makeText(getApplicationContext(),
+                                "Disliked", Toast.LENGTH_LONG)
+                                .show();
+                        tags.remove(0);
                     }
                 });
                 adapter.add(card );
             }
-        }
-        if (pos==1){
-            for (int j=0;j<tag2.size();j++){
-                UserProfile u=(UserProfile)tag2.get(j);
-                adapter.add(new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture2)) );
-            }
-        }
-        if (pos==2){
-            for (int j=0;j<tag3.size();j++){
-                UserProfile u=(UserProfile)tag3.get(j);
-                adapter.add(new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture3)) );
-            }
-        }
+      //  }
+//        if (pos==1){
+//            for (int j=0;j<tag2.size();j++){
+//                UserProfile u=(UserProfile)tag2.get(j);
+//                CardModel card=new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture2));
+////                card.setOnClickListener(new CardModel.OnClickListener() {
+////                    @Override
+////                    public void OnClickListener() {
+////                        Log.i("Swipeable Cards","I am pressing the card");
+////                    }
+////                });
+//                card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
+//                    @Override
+//                    public void onLike() {
+//                        //Log.i("Swipeable Cards","I like the card");
+//
+//                        UserProfile p=(UserProfile)tag2.remove(0);
+//
+//                        cr.matches.add(p);
+//                    }
+//
+//                    @Override
+//                    public void onDislike() {
+//                        // Log.i("Swipeable Cards","I dislike the card");
+//                        tag2.remove(0);
+//                    }
+//                });
+//                adapter.add(card );
+//            }
+//        }
+//        if (pos==2){
+//            for (int j=0;j<tag3.size();j++){
+//                UserProfile u=(UserProfile)tag3.get(j);
+//                CardModel card=new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture3));
+////                card.setOnClickListener(new CardModel.OnClickListener() {
+////                    @Override
+////                    public void OnClickListener() {
+////                        Log.i("Swipeable Cards","I am pressing the card");
+////                    }
+////                });
+//                card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
+//                    @Override
+//                    public void onLike() {
+//                        //Log.i("Swipeable Cards","I like the card");
+//                        UserProfile p=(UserProfile)tag3.remove(0);
+//
+//                        cr.matches.add(p);
+//                    }
+//
+//                    @Override
+//                    public void onDislike() {
+//                        // Log.i("Swipeable Cards","I dislike the card");
+//                        tag3.remove(0);
+//                    }
+//                });
+//                adapter.add(card );
+//            }
+//        }
 //        adapter.add(new CardModel("Bobby Smith", "Hello, my name is Bobby. I just moved from " +
 //                "Chicago and I don't know many people in the area. This is an activity I enjoy doing" +
 //                "with lots of people so please don't hesitate to contact me if you are interested." +
@@ -129,6 +196,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 //                "and moved here when I was six. I am trying to branch out and try new things and meet new" +
 //                "people.", r.getDrawable(R.drawable.picture1)));
         mCardContainer.setAdapter(adapter);
+
 
 
 
@@ -197,18 +265,32 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         drawerLayout.closeDrawer(drawerList);
         if (position==0){
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+            s.setCurrUser(cr);
+            s.setTags(pos,tags);
             startActivity(nextScreen);
         }
         if (position==1){
             Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
+            s.setCurrUser(cr);
+            s.setTags(pos,tags);
             startActivity(nextScreen);
         }
         if (position==2){
             Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
+            s.setCurrUser(cr);
+            s.setTags(pos,tags);
+           // Bundle b = new Bundle();
+//            b.putParcelable("currUser", cr);
+//            b.putParcelableArrayList("tag1", tag1);
+//            b.putParcelableArrayList("tag2", tag2);
+//            b.putParcelableArrayList("tag3", tag3);
+//            nextScreen.putExtras(b);
             startActivity(nextScreen);
         }
         if (position==3){
             Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
+            s.setCurrUser(cr);
+            s.setTags(pos,tags);
             startActivity(nextScreen);
         }
     }

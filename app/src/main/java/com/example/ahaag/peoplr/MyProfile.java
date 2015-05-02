@@ -31,8 +31,10 @@ protected void onCreate(Bundle savedInstanceState) {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-    Intent j=getIntent();
-    cr =j.getParcelableExtra("currUser");
+//    Intent j=getIntent();
+//    cr =j.getParcelableExtra("currUser");
+    startUp s=((startUp)getApplicationContext());
+    cr=s.getCurrUser();
     TextView username = (TextView) findViewById(R.id.username);
     username.setText(cr.getName());
     TextView contactInfo=(TextView) findViewById(R.id.contactInfo);

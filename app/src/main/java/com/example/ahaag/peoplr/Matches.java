@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 
 
@@ -24,6 +23,11 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     String[] fragmentNames;
     ListView drawerList;
     ListView listview;
+    UserProfile cr;
+    ArrayList tag1;
+    ArrayList tag2;
+    ArrayList tag3;
+    startUp s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +36,29 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        ArrayList<String> values=new ArrayList<String>();
-        values. add("bobby Miller");
-        values.add("Joan Smith");
+        s=((startUp)getApplicationContext());
+        cr=s.getCurrUser();
 
+//        Intent j=getIntent();
+//
+//        cr =j.getParcelableExtra("currUser");
+//        tag1=j.getParcelableArrayListExtra("tag1");
+//        tag2=j.getParcelableArrayListExtra("tag2");
+//        tag3=j.getParcelableArrayListExtra("tag3");
+
+        ArrayList<String> list=new ArrayList<>();
+//        list.add("Bob");
+//        list.add("Joan");
+
+        ArrayList<UserProfile> m=cr.getMatches();
+
+        for (int i=0; i<m.size(); i++){
+            UserProfile p=m.get(i);
+            list.add(p.getName());
+        }
+//
         listview = (ListView) findViewById(R.id.fragmentContainer);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.label, values);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
 
 

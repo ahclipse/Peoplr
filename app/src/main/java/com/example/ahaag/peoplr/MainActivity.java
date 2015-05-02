@@ -39,11 +39,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        Intent j=getIntent();
-        cr =j.getParcelableExtra("currUser");
-        tag1=j.getParcelableArrayListExtra("tag1");
-        tag2=j.getParcelableArrayListExtra("tag2");
-        tag3=j.getParcelableArrayListExtra("tag3");
+//        Intent j=getIntent();
+//        cr =j.getParcelableExtra("currUser");
+//        tag1=j.getParcelableArrayListExtra("tag1");
+//        tag2=j.getParcelableArrayListExtra("tag2");
+//        tag3=j.getParcelableArrayListExtra("tag3");
 
         //CROSSYOUR FINGERS AND PRAY
 
@@ -72,12 +72,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
                 nextScreen.putExtra("tag", tag);
                 nextScreen.putExtra("pos", position);
-                Bundle b = new Bundle();
-                b.putParcelable("currUser", cr);
-                b.putParcelableArrayList("tag1", tag1);
-                b.putParcelableArrayList("tag2", tag2);
-                b.putParcelableArrayList("tag3", tag3);
-                nextScreen.putExtras(b);
+//                Bundle b = new Bundle();
+//                b.putParcelable("currUser", cr);
+//                b.putParcelableArrayList("tag1", tag1);
+//                b.putParcelableArrayList("tag2", tag2);
+//                b.putParcelableArrayList("tag3", tag3);
+//                nextScreen.putExtras(b);
                 startActivity(nextScreen);
             }
         });
@@ -153,10 +153,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             startActivity(nextScreen);
         }
         if (position==1){
-            Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
-            Bundle b = new Bundle();
-            b.putParcelable("currUser", cr);
-            nextScreen.putExtras(b);
+            Intent nextScreen = new Intent(this, MyProfile.class);
+//            Bundle b = new Bundle();
+//            b.putParcelable("currUser", cr);
+//            nextScreen.putExtras(b);
             startActivity(nextScreen);
         }
         if (position==2){
