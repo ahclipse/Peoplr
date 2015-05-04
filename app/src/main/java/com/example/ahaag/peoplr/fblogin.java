@@ -3,15 +3,28 @@ package com.example.ahaag.peoplr;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenSource;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphRequestBatch;
+import com.facebook.GraphResponse;
+import com.facebook.internal.CollectionMapper;
+//import com.facebook.login.LoginClient;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 
 public class fblogin extends Activity {
@@ -31,6 +44,7 @@ public class fblogin extends Activity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         // App code
+                        String accessToken= loginResult.getAccessToken().getToken();
                         setContentView(R.layout.activity_main);
                     }
 
@@ -44,7 +58,11 @@ public class fblogin extends Activity {
                         // App code
                     }
                 });
+
+
     }
+
+
 
 
     @Override

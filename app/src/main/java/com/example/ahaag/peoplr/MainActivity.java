@@ -1,12 +1,13 @@
 package com.example.ahaag.peoplr;
 
-//lolololol butts
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -36,8 +44,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setHomeButtonEnabled(true);
 
 
-        //CROSSYOUR FINGERS AND PRAY
-
         listview = (ListView) findViewById(R.id.fragmentContainer);
         String[] values = new String[] { "Cooking", "Running", "Knitting",
                 "Basketball", "Sleeping", "Swimming", "Biking", "Soccer", "Reading", "Eating" };
@@ -47,6 +53,21 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
 
+
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
+                        // Application code
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email,picture,access_token");
+        request.setParameters(parameters);
+        request.executeAsync();
 
          ArrayAdapter adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
