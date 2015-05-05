@@ -5,7 +5,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +20,7 @@ public class startUp extends Application {
    // @Override
    // protected void onCreate(Bundle savedInstanceState) {
         //super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_start_up)
+       // setContentView(R.layout.activity_start_up
 
 
        // Resources r=getResources();

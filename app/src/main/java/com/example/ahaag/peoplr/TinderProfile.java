@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.andtinder.model.CardModel;
 import com.andtinder.model.Orientations;
 import com.andtinder.view.CardContainer;
@@ -78,9 +77,13 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         Resources r=getResources();
 
 
+        //Fix to work on lower APKs?
+       // Resources r = getResources();
+
         mCardContainer = (CardContainer) findViewById(R.id.layoutview);
         mCardContainer.setOrientation(Orientations.Orientation.Disordered);
         SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
+//<<<<<<< HEAD
 
 //        if (pos==0){
             for (int j=0;j<tags.size();j++){
@@ -195,6 +198,29 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 //        adapter.add(new CardModel("Nick Boots", "Hello everyone! My name is Nick. I was born in Idaho" +
 //                "and moved here when I was six. I am trying to branch out and try new things and meet new" +
 //                "people.", r.getDrawable(R.drawable.picture1)));
+//=======
+//        adapter.add(new CardModel("Bobby Smith", "Hello, my name is Bobby. I just moved from " +
+//                "Chicago and I don't know many people in the area. This is an activity I enjoy doing" +
+//                "with lots of people so please don't hesitate to contact me if you are interested." +
+//                "I look forward to meeting you.", r.getDrawable(R.drawable.picture1)));
+//        adapter.add(new CardModel("Mary Miller", "Hey, how it going? I did this a lot as a kid but none of " +
+//                "my friends are interested in doing it with me. I am a friendly person who loves to have " +
+//                "fun.", r.getDrawable(R.drawable.picture2)));
+//        adapter.add(new CardModel("Nathan Simin", "I am very shy but I am quite good at this. I am very quiet and calm" +
+//                "and a nice person to hang out with. Please contact me.", r.getDrawable(R.drawable.picture3)));
+//        adapter.add(new CardModel("Susan Bouda", "Hey! I am senior at uw madison. I am studying wildlife ecology" +
+//                "and I love being outside. I love to laugh and hang out with my friends. I can be loud sometimes" +
+//                "but I can be quiet too.", r.getDrawable(R.drawable.picture2)));
+//        adapter.add(new CardModel("Mark Laeney", "Hello. My name is Mark. I am a freshmen who just moved here" +
+//                "from Arizona. I love Wisconsin so far but I don't know a lot of people. Let me know if" +
+//                "you want to meet me. I love forward to meeting you.", r.getDrawable(R.drawable.picture3)));
+//        adapter.add(new CardModel("Charlie Martin", "This is just one of the many things I love to do. I also love" +
+//                "to swim and dance and play the harmonica. ", r.getDrawable(R.drawable.picture1)));
+//        adapter.add(new CardModel("George Thomas", "My name is George. I am a nice guy.", r.getDrawable(R.drawable.picture2)));
+//        adapter.add(new CardModel("Nick Boots", "Hello everyone! My name is Nick. I was born in Idaho" +
+//                "and moved here when I was six. I am trying to branch out and try new things and meet new" +
+//                "people.", r.getDrawable(R.drawable.picture1)));
+//>>>>>>> 78ee58d408416201dcf08251d3249f77b9301c21
         mCardContainer.setAdapter(adapter);
 
 
