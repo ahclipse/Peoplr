@@ -21,12 +21,9 @@
     <string name="title_activity_my_profile">MyProfile</string>
     <string name="title_activity_matches">Matches</string>
     <string name="title_activity_maps">Map</string>
-
     <string name="title_activity_start_up">startUp</string>
-
     <string name="title_activity_fblogin">Peoplr</string>
     <string name="title_activity_facebook">FacebookActivity</string>
-
-
+    <string name="title_activity_matches_profile">MatchesProfile</string>
 
 </resources>

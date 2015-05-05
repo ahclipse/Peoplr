@@ -27,7 +27,9 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     ArrayList tag1;
     ArrayList tag2;
     ArrayList tag3;
+    ArrayList<String> list;
     startUp s;
+    ArrayList<UserProfile> m;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +48,11 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 //        tag2=j.getParcelableArrayListExtra("tag2");
 //        tag3=j.getParcelableArrayListExtra("tag3");
 
-        ArrayList<String> list=new ArrayList<>();
+         list=new ArrayList<>();
 //        list.add("Bob");
 //        list.add("Joan");
 
-        ArrayList<UserProfile> m=cr.getMatches();
+         m=cr.getMatches();
 
         for (int i=0; i<m.size(); i++){
             UserProfile p=m.get(i);
@@ -60,6 +62,31 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         listview = (ListView) findViewById(R.id.fragmentContainer);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+//                Toast.makeText(getApplicationContext(),
+//                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
+//                        .show();
+
+                UserProfile u=m.get(position);
+                Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
+                nextScreen.putExtra("name", u.getName());
+                nextScreen.putExtra("description", u.getDescription());
+                nextScreen.putExtra("contactInfo", u.getContactInfo());
+//                Bundle b = new Bundle();
+//                b.putParcelable("currUser", cr);
+//                b.putParcelableArrayList("tag1", tag1);
+//                b.putParcelableArrayList("tag2", tag2);
+//                b.putParcelableArrayList("tag3", tag3);
+//                nextScreen.putExtras(b);
+                startActivity(nextScreen);
+            }
+        });
+
+
 
 
         // Set the drawer toggle as the DrawerListener

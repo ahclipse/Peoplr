@@ -49,8 +49,10 @@ public class fblogin extends Activity {
                         String accessToken= loginResult.getAccessToken().getToken();
 
                         //setContentView(R.layout.activity_main);
-                        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(nextScreen);
+
+                        //Remeber to uncomment
+//                        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+//                        startActivity(nextScreen);
                     }
 
                     @Override
@@ -63,8 +65,9 @@ public class fblogin extends Activity {
                         // App code
                     }
                 });
-
-
+    //delete this
+        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(nextScreen);
 
     }
 
