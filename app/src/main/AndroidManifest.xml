@@ -93,6 +93,10 @@
             android:name=".MatchesProfile"
             android:label="@string/title_activity_matches_profile" >
         </activity>
+        <activity
+            android:name=".EditInfo"
+            android:label="@string/title_activity_edit_info" >
+        </activity>
     </application>
 
 </manifest>

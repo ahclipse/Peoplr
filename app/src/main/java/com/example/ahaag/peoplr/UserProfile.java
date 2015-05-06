@@ -42,9 +42,13 @@ public class UserProfile implements Parcelable {
    ArrayList getMatches() {
         return matches;
     }
+    //Drawable getImage(){return image;}
     void setMatches(ArrayList m){
         matches=m;
     }
+    void setDescription(String d){description=d;}
+    void setContactInfo(String c){contactInfo=c;}
+
 
 
     public int describeContents() {
@@ -61,6 +65,8 @@ public class UserProfile implements Parcelable {
         bundle.putString("contactInfo", contactInfo);
         bundle.putString("description", description);
         bundle.putParcelableArrayList("matches", matches);
+
+
         //bundle.setClassLoader(LocationType.class.getClassLoader());
         //NEED TO ADD IMage
         //dest.writeString(name);

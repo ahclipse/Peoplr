@@ -7,15 +7,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -62,7 +59,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
 
-
+        //DOES THIS WORK THE WAY ITS SUPPOSED TO???
+        //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
         GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -74,7 +72,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                     }
                 });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,picture,access_token");
+        parameters.putString("fields", "id,name,email,picture");//access_token?
+       //I THINK ^^^^ IS ALL I NEED
         request.setParameters(parameters);
         request.executeAsync();
 

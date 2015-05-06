@@ -25,5 +25,6 @@
     <string name="title_activity_fblogin">Peoplr</string>
     <string name="title_activity_facebook">FacebookActivity</string>
     <string name="title_activity_matches_profile">MatchesProfile</string>
+    <string name="title_activity_edit_info">EditInfo</string>
 
 </resources>
