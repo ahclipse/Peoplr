@@ -26,13 +26,10 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     String[] fragmentNames;
     ListView drawerList;
     ListView listview;
-    UserProfile cr;
-    ArrayList tag1;
-    ArrayList tag2;
-    ArrayList tag3;
+
     ArrayList<String> list;
     startUp s;
-    ArrayList<UserProfile> m;
+
     int id;
     int[] u;
     user u2;
@@ -45,21 +42,12 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         getActionBar().setHomeButtonEnabled(true);
 
         s=((startUp)getApplicationContext());
-       // cr=s.getCurrUser();
-
-//        Intent j=getIntent();
-//
-//        cr =j.getParcelableExtra("currUser");
-//        tag1=j.getParcelableArrayListExtra("tag1");
-//        tag2=j.getParcelableArrayListExtra("tag2");
-//        tag3=j.getParcelableArrayListExtra("tag3");
 
          list=new ArrayList<>();
-//        list.add("Bob");
-//        list.add("Joan");
+
 
         id=s.getUserId();
-        //GET MATCHS FOR ID
+        //GET MATCHeS FOR ID
         String st="[9,10,11,12,13,14,15,16]";
         Gson gson = new Gson();
         u = gson.fromJson(st, int[].class);
@@ -71,13 +59,6 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
             list.add(u2.name);
         }
 
-        // m=cr.getMatches();
-
-//        for (int i=0; i<m.size(); i++){
-//            UserProfile p=m.get(i);
-//            list.add(p.getName());
-//        }
-////
         listview = (ListView) findViewById(R.id.fragmentContainer);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
@@ -86,22 +67,11 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-//                Toast.makeText(getApplicationContext(),
-//                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
-//                        .show();
-
-               // UserProfile u=m.get(position);
+//
                 int userID=u[position];
                 Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
                 nextScreen.putExtra("user", userID);
-//                nextScreen.putExtra("description", u.getDescription());
-//                nextScreen.putExtra("contactInfo", u.getContactInfo());
-//                Bundle b = new Bundle();
-//                b.putParcelable("currUser", cr);
-//                b.putParcelableArrayList("tag1", tag1);
-//                b.putParcelableArrayList("tag2", tag2);
-//                b.putParcelableArrayList("tag3", tag3);
-//                nextScreen.putExtras(b);
+
                 startActivity(nextScreen);
            }
        });

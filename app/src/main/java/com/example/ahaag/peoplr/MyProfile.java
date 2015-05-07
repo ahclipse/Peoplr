@@ -3,6 +3,8 @@ package com.example.ahaag.peoplr;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +21,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class MyProfile extends Activity implements AdapterView.OnItemClickListener{
@@ -38,10 +45,7 @@ protected void onCreate(Bundle savedInstanceState) {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-//    Intent j=getIntent();
-//    cr =j.getParcelableExtra("currUser");
     startUp s=((startUp)getApplicationContext());
-   // cr=s.getCurrUser();
     //USED TO GET CORRECT USER
     id=s.getUserId();
     String st="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
@@ -52,14 +56,19 @@ protected void onCreate(Bundle savedInstanceState) {
 //    TextView contactInfo=(TextView) findViewById(R.id.contactInfo);
 //    contactInfo.setText(cr.getContactInfo());
     TextView description=(TextView) findViewById(R.id.description);
-    if (!currUser.blurb.equals(null))
+    //if not null!
+    //if (!currUser.blurb.equals(""))
     description.setText(currUser.blurb);
 
-//    String test="@drawable/image1";
-//   Drawable d=Drawable.createFromPath(test);
-//    int id = getResources().getIdentifier("peoplr:drawable/" + "peoplrlogo.png", null, null);
-//  ImageView im=(ImageView) findViewById(R.id.imageView1);
-//   im.setImage(id);
+
+
+       ImageView im=(ImageView) findViewById(R.id.imageView1);
+
+    new ImageLoadTask(currUser.photo_url, im).execute();
+
+
+   //im.setImageDrawable(d);
+
     Button button = (Button) findViewById(R.id.Button);
     button.setOnClickListener(new View.OnClickListener() {
         public void onClick(View v) {
