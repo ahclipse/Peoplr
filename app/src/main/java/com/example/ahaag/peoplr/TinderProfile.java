@@ -23,6 +23,7 @@ import com.andtinder.model.CardModel;
 import com.andtinder.model.Orientations;
 import com.andtinder.view.CardContainer;
 import com.andtinder.view.SimpleCardStackAdapter;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,9 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 //    ArrayList tag3;
     ArrayList <UserProfile> tags;
     startUp s;
-    int pos;
+    int tagID;
+    int[] u;
+    user u2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,65 +63,103 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         Intent i=getIntent();
         String tag=i.getStringExtra("tag");
         tagtext.setText(tag);
-         s=((startUp)getApplicationContext());
-        cr=s.getCurrUser();
-        pos =i.getIntExtra("pos",0);
-        tags=s.getTagList(pos);
+        s=((startUp)getApplicationContext());
+//        cr=s.getCurrUser();
+        //THis is the tag id!!1
+         tagID=i.getIntExtra("id",0);
+        String st="[9,10,11,12,13,14,15,16]";//Get users on tag with id above
+        Gson gson = new Gson();
+        u = gson.fromJson(st, int[].class);
+       // tags=s.getTagList(tagID);//DeleteThisiss
+
 //        cr=i.getParcelableExtra("currUser");
 //        tag1=i.getParcelableArrayListExtra("tag1");
 //         tag2=i.getParcelableArrayListExtra("tag2");
 //        tag3=i.getParcelableArrayListExtra("tag3");
+        Resources r=getResources();//delete
+
+        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
+        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
+        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
+        for (int j=0;j<u.length;j++){
+            //get user with id u.ids[j]
+            String st2="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
+            Gson gson2 = new Gson();
+            u2 = gson2.fromJson(st2, user.class);
+            CardModel card=new CardModel(u2.name, u2.blurb,r.getDrawable(R.drawable.picture1));//Must add actual picture
+//
+            card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
+                @Override
+                public void onLike() {
+                    //Log.i("Swipeable Cards","I like the card");
+                    Toast.makeText(getApplicationContext(),
+                            "Liked", Toast.LENGTH_LONG)
+                            .show();
+
+                    //udate swiping liked with id u[j] and s.getUserId()
+                }
+
+                @Override
+                public void onDislike() {
+                    // Log.i("Swipeable Cards","I dislike the card");
+                    Toast.makeText(getApplicationContext(),
+                            "Disliked", Toast.LENGTH_LONG)
+                            .show();
+                    //udate swiping disliked with id u[j] and s.getUserId()
+                }
+            });
+            adapter.add(card );
+        }
 
 
 
 
 
-
-        Resources r=getResources();
+       // Resources r=getResources();
 
 
         //Fix to work on lower APKs?
        // Resources r = getResources();
 
-        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
-        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
-        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
+//        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
+//        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
+//        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
 //<<<<<<< HEAD
 
 //        if (pos==0){
-            for (int j=0;j<tags.size();j++){
-                UserProfile u=(UserProfile)tags.get(j);
-                CardModel card=new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture1));
-//                card.setOnClickListener(new CardModel.OnClickListener() {
+//            for (int j=0;j<tags.size();j++){
+//                UserProfile u=(UserProfile)tags.get(j);
+//                CardModel card=new CardModel(u.getName(), u.getDescription(),r.getDrawable(R.drawable.picture1));
+////                card.setOnClickListener(new CardModel.OnClickListener() {
+////                    @Override
+////                    public void OnClickListener() {
+////                        Log.i("Swipeable Cards","I am pressing the card");
+////                    }
+////                });
+//                card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
 //                    @Override
-//                    public void OnClickListener() {
-//                        Log.i("Swipeable Cards","I am pressing the card");
+//                    public void onLike() {
+//                        //Log.i("Swipeable Cards","I like the card");
+//                        Toast.makeText(getApplicationContext(),
+//                                "Liked", Toast.LENGTH_LONG)
+//                                .show();
+//
+//                        UserProfile p=(UserProfile)tags.remove(0);
+//
+//                        cr.matches.add(p);
+//                    }
+//
+//                    @Override
+//                    public void onDislike() {
+//                       // Log.i("Swipeable Cards","I dislike the card");
+//                        Toast.makeText(getApplicationContext(),
+//                                "Disliked", Toast.LENGTH_LONG)
+//                                .show();
+//                        tags.remove(0);
 //                    }
 //                });
-                card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
-                    @Override
-                    public void onLike() {
-                        //Log.i("Swipeable Cards","I like the card");
-                        Toast.makeText(getApplicationContext(),
-                                "Liked", Toast.LENGTH_LONG)
-                                .show();
-
-                        UserProfile p=(UserProfile)tags.remove(0);
-
-                        cr.matches.add(p);
-                    }
-
-                    @Override
-                    public void onDislike() {
-                       // Log.i("Swipeable Cards","I dislike the card");
-                        Toast.makeText(getApplicationContext(),
-                                "Disliked", Toast.LENGTH_LONG)
-                                .show();
-                        tags.remove(0);
-                    }
-                });
-                adapter.add(card );
-            }
+//                adapter.add(card );
+//            }
       //  }
 //        if (pos==1){
 //            for (int j=0;j<tag2.size();j++){
@@ -291,20 +332,20 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         drawerLayout.closeDrawer(drawerList);
         if (position==0){
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-            s.setCurrUser(cr);
-            s.setTags(pos,tags);
+//            s.setCurrUser(cr);
+//            s.setTags(tagID,tags);//changed from pos
             startActivity(nextScreen);
         }
         if (position==1){
             Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
-            s.setCurrUser(cr);
-            s.setTags(pos,tags);
+//            s.setCurrUser(cr);
+//            s.setTags(tagID,tags);
             startActivity(nextScreen);
         }
         if (position==2){
             Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
-            s.setCurrUser(cr);
-            s.setTags(pos,tags);
+//            s.setCurrUser(cr);
+//            s.setTags(tagID,tags);
            // Bundle b = new Bundle();
 //            b.putParcelable("currUser", cr);
 //            b.putParcelableArrayList("tag1", tag1);
@@ -315,9 +356,23 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
         if (position==3){
             Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
-            s.setCurrUser(cr);
-            s.setTags(pos,tags);
+//            s.setCurrUser(cr);
+//            s.setTags(tagID,tags);
             startActivity(nextScreen);
         }
     }
 }
+//class userID{
+//    int[] ids;
+//}
+//class user{
+//    int id;
+//    String name;
+//    String blurb;
+//    String fb_access_token;
+//    String created_at;
+//    String updated_at;
+//    double longitude;
+//    double latitude;
+//    String photo_url;
+//}

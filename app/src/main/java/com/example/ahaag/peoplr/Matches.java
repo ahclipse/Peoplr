@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 
@@ -30,6 +33,9 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     ArrayList<String> list;
     startUp s;
     ArrayList<UserProfile> m;
+    int id;
+    int[] u;
+    user u2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,7 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         getActionBar().setHomeButtonEnabled(true);
 
         s=((startUp)getApplicationContext());
-        cr=s.getCurrUser();
+       // cr=s.getCurrUser();
 
 //        Intent j=getIntent();
 //
@@ -52,17 +58,30 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 //        list.add("Bob");
 //        list.add("Joan");
 
-         m=cr.getMatches();
-
-        for (int i=0; i<m.size(); i++){
-            UserProfile p=m.get(i);
-            list.add(p.getName());
+        id=s.getUserId();
+        //GET MATCHS FOR ID
+        String st="[9,10,11,12,13,14,15,16]";
+        Gson gson = new Gson();
+        u = gson.fromJson(st, int[].class);
+        for (int i=0;i<u.length;i++){
+            //get user with id u[i]
+            String st2="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
+            Gson gson2 = new Gson();
+            u2 = gson2.fromJson(st2, user.class);
+            list.add(u2.name);
         }
-//
+
+        // m=cr.getMatches();
+
+//        for (int i=0; i<m.size(); i++){
+//            UserProfile p=m.get(i);
+//            list.add(p.getName());
+//        }
+////
         listview = (ListView) findViewById(R.id.fragmentContainer);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
-
+//
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -71,11 +90,12 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 //                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
 //                        .show();
 
-                UserProfile u=m.get(position);
+               // UserProfile u=m.get(position);
+                int userID=u[position];
                 Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
-                nextScreen.putExtra("name", u.getName());
-                nextScreen.putExtra("description", u.getDescription());
-                nextScreen.putExtra("contactInfo", u.getContactInfo());
+                nextScreen.putExtra("user", userID);
+//                nextScreen.putExtra("description", u.getDescription());
+//                nextScreen.putExtra("contactInfo", u.getContactInfo());
 //                Bundle b = new Bundle();
 //                b.putParcelable("currUser", cr);
 //                b.putParcelableArrayList("tag1", tag1);
@@ -83,8 +103,8 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 //                b.putParcelableArrayList("tag3", tag3);
 //                nextScreen.putExtras(b);
                 startActivity(nextScreen);
-            }
-        });
+           }
+       });
 
 
 

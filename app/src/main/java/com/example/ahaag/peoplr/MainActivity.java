@@ -17,6 +17,9 @@ import android.widget.TextView;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
 
@@ -36,6 +39,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ArrayList tag1;
     ArrayList tag2;
     ArrayList tag3;
+    tags[] myTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,31 +55,38 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 //        tag3=j.getParcelableArrayListExtra("tag3");
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
-        String[] values = new String[] { "Cooking", "Running", "Knitting",};
+    //String s="[{\"id\":9,\"name\":\"mystery twins\"},{\"id\":10,\"name\":\"lumberjack stuff\"}]";
+        String s="[{\"id\":9,\"name\":\"mystery twins\",\"created_at\":\"2015-05-04T19:10:35.030Z\",\"updated_at\":\"2015-05-04T19:10:35.030Z\"},{\"id\":10,\"name\":\"lumberjack stuff\",\"created_at\":\"2015-05-04T19:15:06.903Z\",\"updated_at\":\"2015-05-04T19:15:06.903Z\"},{\"id\":11,\"name\":\"making money\",\"created_at\":\"2015-05-04T19:15:12.365Z\",\"updated_at\":\"2015-05-04T19:15:12.365Z\"},{\"id\":12,\"name\":\"illuminati\",\"created_at\":\"2015-05-04T19:15:17.642Z\",\"updated_at\":\"2015-05-04T19:15:17.642Z\"},{\"id\":13,\"name\":\"glitter\",\"created_at\":\"2015-05-04T19:15:24.528Z\",\"updated_at\":\"2015-05-04T19:15:24.528Z\"},{\"id\":14,\"name\":\"fixing stuff\",\"created_at\":\"2015-05-04T19:15:30.946Z\",\"updated_at\":\"2015-05-04T19:15:30.946Z\"},{\"id\":15,\"name\":\"society of the blind eye\",\"created_at\":\"2015-05-04T22:19:48.857Z\",\"updated_at\":\"2015-05-04T22:19:48.857Z\"}]";
+//        JsonParser parser = new JsonParser();
+//       JsonObject o = (JsonObject)parser.parse(s);
+        Gson gson = new Gson();
+         myTags = gson.fromJson(s, tags[].class);
+
+        //String[] values = new String[] { "Cooking", "Running", "Knitting",};
                // "Basketball", "Sleeping", "Swimming", "Biking", "Soccer", "Reading", "Eating" };
         final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < values.length; ++i) {
-            list.add(values[i]);
+        for (int i = 0; i < myTags.length; ++i) {
+            list.add(myTags[i].name);
         }
 
 
         //DOES THIS WORK THE WAY ITS SUPPOSED TO???
         //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
-        GraphRequest request = GraphRequest.newMeRequest(
-                AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject object,
-                            GraphResponse response) {
-                        // Application code
-                    }
-                });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id,name,email,picture");//access_token?
-       //I THINK ^^^^ IS ALL I NEED
-        request.setParameters(parameters);
-        request.executeAsync();
+//        GraphRequest request = GraphRequest.newMeRequest(
+//                AccessToken.getCurrentAccessToken(),
+//                new GraphRequest.GraphJSONObjectCallback() {
+//                    @Override
+//                    public void onCompleted(
+//                            JSONObject object,
+//                            GraphResponse response) {
+//                        // Application code
+//                    }
+//                });
+//        Bundle parameters = new Bundle();
+//        parameters.putString("fields", "id,name,email,picture");//access_token?
+//       //I THINK ^^^^ IS ALL I NEED
+//        request.setParameters(parameters);
+//        request.executeAsync();
 
          ArrayAdapter adapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
@@ -91,7 +102,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                    String tag=list.get(position);
                 Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
                 nextScreen.putExtra("tag", tag);
-                nextScreen.putExtra("pos", position);
+                nextScreen.putExtra("id", myTags[position].id);
 //                Bundle b = new Bundle();
 //                b.putParcelable("currUser", cr);
 //                b.putParcelableArrayList("tag1", tag1);
@@ -188,5 +199,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             startActivity(nextScreen);
         }
     }
+  class tags{
+           int id;
+           String name;
+            String created_at;
+            String updated_at;
+       }
+
 
 }

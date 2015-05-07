@@ -54,21 +54,28 @@ public class fblogin extends Activity {
 //                        startActivity(nextScreen);
                         //setContentView(R.layout.activity_main);
                         //TODO:
-                        Intent intent = new Intent(currContext, MainActivity.class);
-                        //intent.putExtra(NAME, VALUE);
-
-                        startActivity(intent);
+//                        Intent intent = new Intent(currContext, MainActivity.class);
+//                        //intent.putExtra(NAME, VALUE);
+//
+//                        startActivity(intent);
 
 
                     }
 
                     @Override
                     public void onCancel() {
+                        Toast.makeText(getApplicationContext(),
+                                "Canceling the idiot!", Toast.LENGTH_LONG)
+                                .show();
                         // App code
+
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
+                        Toast.makeText(getApplicationContext(),
+                                "Error of death!", Toast.LENGTH_LONG)
+                                .show();
                         // App code
                     }
                 });

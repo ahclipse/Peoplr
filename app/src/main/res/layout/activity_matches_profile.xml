@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:textSize="30dp"
             android:text="name"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_alignBottom="@+id/butt"
+            android:layout_toEndOf="@+id/contactInfo" />
 
         <ImageView
 

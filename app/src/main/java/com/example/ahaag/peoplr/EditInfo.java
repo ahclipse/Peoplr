@@ -20,7 +20,7 @@ public class EditInfo extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_info);
         startUp s=((startUp)getApplicationContext());
-        cr=s.getCurrUser();
+        //cr=s.getCurrUser();
 
          de=(EditText) findViewById(R.id.dEdit);
          co=(EditText) findViewById(R.id.cEdit);
@@ -33,10 +33,10 @@ public class EditInfo extends Activity {
                 String des=de.getText().toString();
                 String con=co.getText().toString();
                 if  (!des.equals("")) {
-                    cr.setDescription(des);
+                    //cr.setDescription(des);
                 }
                 if (!con.equals("")) {
-                    cr.setContactInfo(con);
+                    //cr.setContactInfo(con);
                 }
                 Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
                 startActivity(nextScreen);

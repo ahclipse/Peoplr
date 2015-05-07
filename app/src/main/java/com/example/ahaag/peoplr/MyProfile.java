@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 
 public class MyProfile extends Activity implements AdapterView.OnItemClickListener{
 final String drawerTitle= "Navigation";
@@ -26,6 +28,8 @@ final String drawerTitle= "Navigation";
         String[] fragmentNames;
         ListView drawerList;
         UserProfile cr;
+        int id;
+        user currUser;
 
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +41,25 @@ protected void onCreate(Bundle savedInstanceState) {
 //    Intent j=getIntent();
 //    cr =j.getParcelableExtra("currUser");
     startUp s=((startUp)getApplicationContext());
-    cr=s.getCurrUser();
+   // cr=s.getCurrUser();
+    //USED TO GET CORRECT USER
+    id=s.getUserId();
+    String st="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
+    Gson gson = new Gson();
+     currUser= gson.fromJson(st, user.class);
     TextView username = (TextView) findViewById(R.id.username);
-    username.setText(cr.getName());
-    TextView contactInfo=(TextView) findViewById(R.id.contactInfo);
-    contactInfo.setText(cr.getContactInfo());
+    username.setText(currUser.name);
+//    TextView contactInfo=(TextView) findViewById(R.id.contactInfo);
+//    contactInfo.setText(cr.getContactInfo());
     TextView description=(TextView) findViewById(R.id.description);
-    description.setText(cr.getDescription());
+    if (!currUser.blurb.equals(null))
+    description.setText(currUser.blurb);
 
 //    String test="@drawable/image1";
 //   Drawable d=Drawable.createFromPath(test);
 //    int id = getResources().getIdentifier("peoplr:drawable/" + "peoplrlogo.png", null, null);
 //  ImageView im=(ImageView) findViewById(R.id.imageView1);
-//   im.setImageResource(id);
+//   im.setImage(id);
     Button button = (Button) findViewById(R.id.Button);
     button.setOnClickListener(new View.OnClickListener() {
         public void onClick(View v) {
@@ -140,4 +150,15 @@ public void onItemClick(AdapterView parent, View view, int position, long id) {
         }
         }
 
-        }
+  }
+class user{
+    int id;
+    String name;
+    String blurb;
+    String fb_access_token;
+    String created_at;
+    String updated_at;
+    double longitude;
+    double latitude;
+    String photo_url;
+}

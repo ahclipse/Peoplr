@@ -32,4 +32,5 @@ dependencies {
     compile project(':AndTinder')
     compile 'com.google.android.gms:play-services:7.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.0.1'
+    compile 'com.google.code.gson:gson:2.2.4'
 }
