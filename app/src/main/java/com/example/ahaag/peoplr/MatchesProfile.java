@@ -36,7 +36,7 @@ public class MatchesProfile extends Activity {
 //        if (!u2.blurb.equals(null))
         de.setText(u2.blurb);
        // co.setText(c);
-        new ImageLoadTask(u2.photo_url, im).execute();
+        new ImageLoadTask(u2.photo_url, im,true).execute();
 
         final Button button = (Button) findViewById(R.id.butt);
         button.setOnClickListener(new View.OnClickListener() {

@@ -25,6 +25,7 @@ import com.facebook.login.LoginResult;
 
 
 public class fblogin extends Activity {
+    CallbackManager callbackManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class fblogin extends Activity {
         setContentView(R.layout.activity_fblogin);
         final Context currContext = this;
 
-        CallbackManager callbackManager = CallbackManager.Factory.create();
+         callbackManager = CallbackManager.Factory.create();
         //doesnt' redirect to mainActivity (check AndroidManifest)
         //NEEDS TO REDIRECT
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -54,10 +55,10 @@ public class fblogin extends Activity {
 //                        startActivity(nextScreen);
                         //setContentView(R.layout.activity_main);
                         //TODO:
-//                        Intent intent = new Intent(currContext, MainActivity.class);
-//                        //intent.putExtra(NAME, VALUE);
-//
-//                        startActivity(intent);
+                        Intent intent = new Intent(currContext, MainActivity.class);
+                        //intent.putExtra(NAME, VALUE);
+
+                        startActivity(intent);
 
 
                     }
@@ -80,12 +81,16 @@ public class fblogin extends Activity {
                     }
                 });
     //delete this
-        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(nextScreen);
+//        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+//        startActivity(nextScreen);
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
 
 
 //    @Override

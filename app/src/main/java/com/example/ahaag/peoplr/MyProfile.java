@@ -64,7 +64,7 @@ protected void onCreate(Bundle savedInstanceState) {
 
        ImageView im=(ImageView) findViewById(R.id.imageView1);
 
-    new ImageLoadTask(currUser.photo_url, im).execute();
+    new ImageLoadTask(currUser.photo_url, im, true).execute();
 
 
    //im.setImageDrawable(d);
