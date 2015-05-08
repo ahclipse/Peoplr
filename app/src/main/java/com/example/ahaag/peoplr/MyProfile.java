@@ -57,7 +57,7 @@ protected void onCreate(Bundle savedInstanceState) {
 //    contactInfo.setText(cr.getContactInfo());
     TextView description=(TextView) findViewById(R.id.description);
     //if not null!
-    //if (!currUser.blurb.equals(""))
+    if (currUser.blurb!=null)
     description.setText(currUser.blurb);
 
 
