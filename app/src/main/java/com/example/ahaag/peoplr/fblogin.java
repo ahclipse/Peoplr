@@ -1,25 +1,24 @@
 package com.example.ahaag.peoplr;
 
 import android.app.Activity;
-//<<<<<<< HEAD
-//import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-////
 import android.content.Context;
 import android.content.Intent;
-//>>>>>>> f3ae491dc09f1f5f25efeed4a5fbe07a39ab3bd8
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+
+//<<<<<<< HEAD
+//import android.content.Intent;
+////
+//>>>>>>> f3ae491dc09f1f5f25efeed4a5fbe07a39ab3bd8
 
 
 public class fblogin extends Activity {
@@ -43,6 +42,11 @@ public class fblogin extends Activity {
                        Log.e("FB INFO", loginResult.toString());
                         String accessToken= loginResult.getAccessToken().getToken();
 
+                        String id = Profile.getCurrentProfile().getId();
+                        String first_name = Profile.getCurrentProfile().getFirstName();
+                        String last_name = Profile.getCurrentProfile().getLastName();
+                        String picture = Profile.getCurrentProfile().getProfilePictureUri(50, 50).toString();
+                        Log.w("STUFF", "HERE: "+id+" "+" "+first_name + " " + last_name);
 
                         //Progress from the Login to the MainActivity
                         Intent intent = new Intent(currContext, MainActivity.class);
