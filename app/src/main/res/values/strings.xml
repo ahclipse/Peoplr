@@ -14,6 +14,7 @@
         <item>My Profile</item>
         <item>Matches</item>
         <item>Map</item>
+
     </string-array>
 
     <string name="title_activity_tinder_profile">Profiles</string>
