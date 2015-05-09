@@ -2,8 +2,11 @@ package com.example.ahaag.peoplr;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,17 +16,25 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
+import org.apache.http.NameValuePair;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 //MOAR BUTTS
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener{
@@ -39,7 +50,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ArrayList tag1;
     ArrayList tag2;
     ArrayList tag3;
-    tags[] myTags;
+    //tags[] myTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +59,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-
-
         listview = (ListView) findViewById(R.id.fragmentContainer);
-        //Get tags string
-        String s="[{\"id\":9,\"name\":\"mystery twins\",\"created_at\":\"2015-05-04T19:10:35.030Z\",\"updated_at\":\"2015-05-04T19:10:35.030Z\"},{\"id\":10,\"name\":\"lumberjack stuff\",\"created_at\":\"2015-05-04T19:15:06.903Z\",\"updated_at\":\"2015-05-04T19:15:06.903Z\"},{\"id\":11,\"name\":\"making money\",\"created_at\":\"2015-05-04T19:15:12.365Z\",\"updated_at\":\"2015-05-04T19:15:12.365Z\"},{\"id\":12,\"name\":\"illuminati\",\"created_at\":\"2015-05-04T19:15:17.642Z\",\"updated_at\":\"2015-05-04T19:15:17.642Z\"},{\"id\":13,\"name\":\"glitter\",\"created_at\":\"2015-05-04T19:15:24.528Z\",\"updated_at\":\"2015-05-04T19:15:24.528Z\"},{\"id\":14,\"name\":\"fixing stuff\",\"created_at\":\"2015-05-04T19:15:30.946Z\",\"updated_at\":\"2015-05-04T19:15:30.946Z\"},{\"id\":15,\"name\":\"society of the blind eye\",\"created_at\":\"2015-05-04T22:19:48.857Z\",\"updated_at\":\"2015-05-04T22:19:48.857Z\"}]";
 
-        Gson gson = new Gson();
-         myTags = gson.fromJson(s, tags[].class);
-
-
-        final ArrayList<String> list = new ArrayList<String>();
-        for (int i = 0; i < myTags.length; ++i) {
-            list.add(myTags[i].name);
-        }
-
+        MainActivity activity = this;
+        new TagDownloadTask(3, activity).execute(); // listview? null will be params eventually...
 
         //DOES THIS WORK THE WAY ITS SUPPOSED TO???
         //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
@@ -81,25 +81,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 //       //I THINK ^^^^ IS ALL I NEED
 //        request.setParameters(parameters);
 //        request.executeAsync();
-
-         ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        listview.setAdapter(adapter);
-
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-//
-                   String tag=list.get(position);
-                Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
-                nextScreen.putExtra("tag", tag);
-                nextScreen.putExtra("id", myTags[position].id);
-                startActivity(nextScreen);
-            }
-        });
-
-
 
 
         // Set the drawer toggle as the DrawerListener
@@ -165,6 +146,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         getActionBar().setTitle(fragmentNames[position]);
         drawerLayout.closeDrawer(drawerList);
+
+        // TODO THIS MAKES NO SENSE, NEEDS TO BE DYNAMIC???
+
         if (position==0){
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(nextScreen);
@@ -186,12 +170,173 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
     }
-  class tags{
-           int id;
-           String name;
-            String created_at;
-            String updated_at;
-       }
 
+    public class Tag {
 
+        @SerializedName("updated_at")
+        private String updated_at;
+
+        @SerializedName("created_at")
+        private String created_at;
+
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("name")
+        private String name;
+
+        public final Integer getId() {
+            return Integer.parseInt(this.id);
+        }
+
+        public final String getName() {
+            return this.name;
+        }
+
+    }
+
+    protected void onTagResponse(String response){
+
+        Gson gson = new Gson();
+
+        String jsonOutput = response.trim();
+        Type listType = new TypeToken<List<Tag>>(){}.getType();
+        final List<Tag> tags = (List<Tag>) gson.fromJson(jsonOutput, listType);
+
+        final ArrayList<String> list = new ArrayList<String>();
+        for (Tag t : tags) {
+            list.add(t.getName());
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, list);
+        listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                String tagName = list.get(position);
+                Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
+                nextScreen.putExtra("tag", tagName);
+                nextScreen.putExtra("id", tags.get(position).getId());
+                startActivity(nextScreen);
+            }
+        });
+    }
+
+    class TagDownloadTask extends AsyncTask<Void, Void, String> {
+
+        int type;
+        List<NameValuePair> params;
+
+        ProgressDialog dialog;
+        Context context;
+        MainActivity activity;
+
+        // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
+        // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
+
+        public TagDownloadTask(int type, MainActivity activity){
+
+            this.type = type;
+
+            this.activity = activity;
+            this.context = activity;
+            dialog = new ProgressDialog(context);
+            dialog.setTitle("title");
+            dialog.setMessage("message");
+        }
+
+        protected void onPreExecute() {
+            this.dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... args) {
+            try {
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags", false, params);
+            } catch (IOException e) {
+                return ("Connection error!");
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+            onTagResponse(result);
+            dialog.dismiss();
+        }
+
+        /** Initiates the fetch operation. */
+        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
+            InputStream stream = null;
+            String str ="";
+            try{
+                stream = getRequest(url);
+                str = readIt(stream, 5000); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            return str;
+        }
+
+        // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        private InputStream getRequest(String urlString) throws IOException {
+            // BEGIN_INCLUDE(get_inputstream)
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(20000 /* milliseconds */);
+            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            // Start the query
+            conn.connect();
+            InputStream stream = conn.getInputStream();
+            return stream;
+            // END_INCLUDE(get_inputstream)
+        }
+
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+        {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : params)
+            {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
+        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        /** Reads an InputStream and converts it to a String.
+         * @param stream InputStream containing HTML from targeted site.
+         * @param len Length of string that this method returns.
+         * @return String concatenated according to len parameter.
+         * @throws java.io.IOException
+         * @throws java.io.UnsupportedEncodingException
+         */
+        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+            Reader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            reader.read(buffer);
+            return new String(buffer);
+        }
+    }
 }
