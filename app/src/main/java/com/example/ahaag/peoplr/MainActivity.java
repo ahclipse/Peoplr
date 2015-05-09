@@ -181,9 +181,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             startActivity(nextScreen);
         }
         if (position==3){
-            Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
+            Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
             startActivity(nextScreen);
         }
+
     }
   class tags{
            int id;

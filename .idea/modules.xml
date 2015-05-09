@@ -3,10 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndTinder/AndTinder.iml" filepath="$PROJECT_DIR$/AndTinder/AndTinder.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Peoplr.iml" filepath="$PROJECT_DIR$/Peoplr.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Peoplr_fbfix.iml" filepath="$PROJECT_DIR$/Peoplr_fbfix.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/opencloud/opencloud.iml" filepath="$PROJECT_DIR$/opencloud/opencloud.iml" />
     </modules>
   </component>
 </project>
-

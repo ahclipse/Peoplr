@@ -21,8 +21,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
-//import com.facebook.login.LoginClient;
-
 
 public class fblogin extends Activity {
     CallbackManager callbackManager;
@@ -37,27 +35,17 @@ public class fblogin extends Activity {
         final Context currContext = this;
 
          callbackManager = CallbackManager.Factory.create();
-        //doesnt' redirect to mainActivity (check AndroidManifest)
-        //NEEDS TO REDIRECT
+
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.e("FB INFO", loginResult.toString());
-                        // App code
+                       Log.e("FB INFO", loginResult.toString());
                         String accessToken= loginResult.getAccessToken().getToken();
 
 
-                        //setContentView(R.layout.activity_main);
-
-                        //Remeber to uncomment
-//                        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-//                        startActivity(nextScreen);
-                        //setContentView(R.layout.activity_main);
-                        //TODO:
+                        //Progress from the Login to the MainActivity
                         Intent intent = new Intent(currContext, MainActivity.class);
-                        //intent.putExtra(NAME, VALUE);
-
                         startActivity(intent);
 
 
@@ -66,7 +54,7 @@ public class fblogin extends Activity {
                     @Override
                     public void onCancel() {
                         Toast.makeText(getApplicationContext(),
-                                "Canceling the idiot!", Toast.LENGTH_LONG)
+                                "Cancelling Login", Toast.LENGTH_LONG)
                                 .show();
                         // App code
 
@@ -75,14 +63,11 @@ public class fblogin extends Activity {
                     @Override
                     public void onError(FacebookException exception) {
                         Toast.makeText(getApplicationContext(),
-                                "Error of death!", Toast.LENGTH_LONG)
+                                "There has been an error", Toast.LENGTH_LONG)
                                 .show();
                         // App code
                     }
                 });
-    //delete this
-//        Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-//        startActivity(nextScreen);
 
     }
 
@@ -93,27 +78,5 @@ public class fblogin extends Activity {
     }
 
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_fblogin, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
 
 }
