@@ -348,10 +348,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
-
-
-
-
     public class User {
 
         @SerializedName("updated_at")
