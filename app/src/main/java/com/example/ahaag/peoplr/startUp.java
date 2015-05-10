@@ -38,7 +38,8 @@ public class startUp extends Application {
     private static Context context = null;
 
     private static String fb_access_token = "";
-    private static int id = -1;
+   private static int id = -1;
+//   private static int id = 9;
     private static String name = "";
     private static String blurb = "";
     private static double latitude = 0;
@@ -161,6 +162,11 @@ public class startUp extends Application {
         }
     }
 
+//<<<<<<< HEAD
+//       //int userId=14;
+//
+//   private int userId = -1;
+//=======
     public static void checkLocation(double testLatitude, double testLongitude){
         if(latitude != testLatitude){
             latitude = testLatitude;
@@ -179,12 +185,19 @@ public class startUp extends Application {
         }
     }
 
+//<<<<<<< HEAD
+//
+//    protected static void onUserCreate(String result){
+//
+//        Log.w("Result:  ", result);
+//=======
     public static void checkContactInfo(String testContactInfo){
         if(!contactInfo.equals(testContactInfo)){
             contactInfo = testContactInfo;
             contactInfoDirtyBit = true;
         }
     }
+//>>>>>>> f0a9e8f9716326728784857611af2e846d96c70c
 
     protected static void onUserCreate(String result){
         Gson gson = new Gson();

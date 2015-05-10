@@ -41,7 +41,7 @@ public class fblogin extends Activity {
             latitude = location.getLatitude();
         }
         catch (NullPointerException e){
-            longitude = 89.4;
+            longitude = -89.4;
             latitude = 43.0667;
         }
         super.onCreate(savedInstanceState);
@@ -74,6 +74,13 @@ public class fblogin extends Activity {
                                     }
                                 });
                         request.executeAsync();
+
+                        //I think this works... Idk atm
+
+                        //Progress from the Login to the MainActivity
+                        Intent intent = new Intent(context, MainActivity.class);
+                        startActivity(intent);
+
                     }
 
                     // TODO BETTER ERROR MESSAGES?
@@ -92,6 +99,12 @@ public class fblogin extends Activity {
 
                     }
                 });
+
+
+//        Intent intent = new Intent(currContext, MainActivity.class);
+//        startActivity(intent);
+
+
     }
 
     @Override

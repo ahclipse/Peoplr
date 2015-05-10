@@ -20,19 +20,19 @@
         android:id="@+id/dEdit"
         android:inputType="text"
         />
-    <TextView
-        android:text="To change contact information:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dEdit"
-        android:id="@+id/cView"/>
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="new contact here"
-        android:layout_below="@+id/cView"
-        android:id="@+id/cEdit"
-        android:inputType="text"
+    <!--<TextView-->
+        <!--android:text="To change contact information:"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/dEdit"-->
+        <!--android:id="@+id/cView"/>-->
+    <!--<EditText-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="new contact here"-->
+        <!--android:layout_below="@+id/cView"-->
+        <!--android:id="@+id/cEdit"-->
+        <!--android:inputType="text"-->
         />
     <Button
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:text="Save Changes"
         android:textSize="10dp"
         android:id="@+id/Button"
-        android:layout_below="@+id/cEdit"
+        android:layout_below="@+id/dEdit"
         android:onClick="selfDestruct" />
 
 
