@@ -83,6 +83,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 //        request.executeAsync();
 
 
+        // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
+        try {
+            Thread.sleep(30);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 

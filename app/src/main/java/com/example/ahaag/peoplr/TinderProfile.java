@@ -5,6 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -17,7 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andtinder.model.CardModel;
+import com.andtinder.model.Orientations;
 import com.andtinder.view.CardContainer;
+import com.andtinder.view.SimpleCardStackAdapter;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -39,6 +45,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class TinderProfile extends Activity implements AdapterView.OnItemClickListener {
     final String drawerTitle = "Navigation";
@@ -52,6 +59,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     int[] u;
     user u2;
 
+    public static List<User> users;
 
     List<NameValuePair> params;
 
@@ -181,15 +189,65 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         String jsonOutput = response.trim();
         Type listType = new TypeToken<List<User>>(){}.getType();
-        final List<User> users = (List<User>) gson.fromJson(jsonOutput, listType);
+        users = (List<User>) gson.fromJson(jsonOutput, listType);
 
         final ArrayList<String> list = new ArrayList<String>();
+        final ArrayList<String> imageUrls = new ArrayList<String>();
         for (User u : users) {
             list.add(u.getName());
+            imageUrls.add(u.getPhoto_url());
+        }
+
+        try {
+            new ImageDownloadTask(imageUrls).execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
 
         Toast.makeText(getApplicationContext(), (String) list.toString(), Toast.LENGTH_LONG).show();
         //TODO
+    }
+
+    protected void onLoadImages(List<Bitmap> images){
+        //TODO STUFF
+
+        //delete when image url works
+        Resources r=getResources();
+
+        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
+        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
+        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
+
+        for (int i = 0; i < users.size(); i++) {
+
+            CardModel card = new CardModel(users.get(i).getName(), users.get(i).getBlurb(), images.get(i));//Must add actual picture
+
+            card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
+                @Override
+                public void onLike() {
+                    Toast.makeText(getApplicationContext(),
+                            "Liked", Toast.LENGTH_LONG)
+                            .show();
+
+                    //TODO SEND SWIPE RESULT = ACCEPTED
+                }
+
+                @Override
+                public void onDislike() {
+                    // Log.i("Swipeable Cards","I dislike the card");
+                    Toast.makeText(getApplicationContext(),
+                            "Disliked", Toast.LENGTH_LONG)
+                            .show();
+
+                    //TODO SEND SWIPE RESULT = REJECTED
+                }
+            });
+            adapter.add(card);
+        }
+
+        mCardContainer.setAdapter(adapter);
     }
 
     @Override
@@ -253,6 +311,46 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             startActivity(nextScreen);
         }
     }
+
+    class ImageDownloadTask extends AsyncTask<Void, Void, Void> {
+
+        List<Bitmap> images;
+        ArrayList<String> imageUrls;
+
+        public ImageDownloadTask(ArrayList<String> imageUrls) {
+            this.imageUrls = imageUrls;
+            images = new ArrayList<Bitmap>();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                for (String url : imageUrls){
+                    URL urlConnection = new URL(url);
+                    HttpURLConnection connection = (HttpURLConnection) urlConnection
+                            .openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                    images.add(myBitmap);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            onLoadImages(images);
+        }
+    }
+
+
+
+
 
     public class User {
 
