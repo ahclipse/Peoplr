@@ -43,6 +43,7 @@ public class fblogin extends Activity {
 
     CallbackManager callbackManager;
     List<NameValuePair> params;
+    fblogin activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class fblogin extends Activity {
         setContentView(R.layout.activity_fblogin);
         final Context currContext = this;
 
+        activity = this;
         callbackManager = CallbackManager.Factory.create();
 
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -114,12 +116,12 @@ public class fblogin extends Activity {
     class UserCreateTask extends AsyncTask<Void, Void, String> {
 
         Context context;
-        TinderProfile activity;
+        fblogin activity;
         int swipeNum;
 
         int streamLength = 0;
 
-        public UserCreateTask(TinderProfile activity){
+        public UserCreateTask(fblogin activity){
             this.activity = activity;
             this.context = activity;
 
