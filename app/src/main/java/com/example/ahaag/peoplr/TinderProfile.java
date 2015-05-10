@@ -60,6 +60,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
     public static List<User> users;
 
+    List<NameValuePair> tagUpdate;
     List<NameValuePair> params;
     List<List<NameValuePair>> swipes; //TODO ENSURE THAT SWIPES DO NOT OVERWRITE EACH OTHER
     int latestSwipe = 0;
@@ -91,6 +92,12 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         activity = this;
 
         // TODO GET USERS FOR SWIPING REQUEST - RETURN ARRAY OF IDS? WHY THO
+
+        tagUpdate = new ArrayList<NameValuePair>();
+        tagUpdate.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
+        tagUpdate.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
+
+        new TagUpdateTask(activity).execute();
 
         swipes = new ArrayList<List<NameValuePair>>();
         params = new ArrayList<NameValuePair>();
@@ -428,7 +435,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             String str ="";
             try{
                 stream = postRequest(url, params);
-                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, 2 * streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -620,4 +627,110 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
+    class TagUpdateTask extends AsyncTask<Void, Void, String>{
+
+        Context context;
+        TinderProfile activity;
+        int streamLength = 0;
+
+        public TagUpdateTask(TinderProfile activity){
+            this.activity = activity;
+            this.context = activity;
+
+        }
+
+        @Override
+        protected String doInBackground(Void... args) {
+            try {
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/add_user_to_tag");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
+
+        /** Initiates the fetch operation. */
+        private String loadFromNetwork(String url) throws IOException {
+            InputStream stream = null;
+            String str ="";
+            try{
+                stream = postRequest(url);
+                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            return str;
+        }
+
+        private InputStream postRequest(String urlString) throws IOException {
+            // BEGIN_INCLUDE(get_inputstream)
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(20000 /* milliseconds */);
+            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(tagUpdate));
+            writer.flush();
+            writer.close();
+
+            // Start the query
+            conn.connect();
+            InputStream stream = conn.getInputStream();
+            streamLength = conn.getContentLength();
+
+            return stream;
+
+            // END_INCLUDE(get_inputstream)
+        }
+
+        private String getQuery(List<NameValuePair> tagUpdate) throws UnsupportedEncodingException
+        {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : tagUpdate)
+            {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
+        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        /** Reads an InputStream and converts it to a String.
+         * @param stream InputStream containing HTML from targeted site.
+         * @param len Length of string that this method returns.
+         * @return String concatenated according to len parameter.
+         * @throws java.io.IOException
+         * @throws java.io.UnsupportedEncodingException
+         */
+        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+            Reader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            reader.read(buffer);
+            return new String(buffer);
+        }
+    }
 }

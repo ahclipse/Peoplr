@@ -50,7 +50,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ArrayList tag1;
     ArrayList tag2;
     ArrayList tag3;
-    //tags[] myTags;
+
+    MainActivity activity;
+    startUp s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
 
-        MainActivity activity = this;
-        new TagDownloadTask(3, activity).execute(); // listview? null will be params eventually...
+        s = ((startUp) getApplicationContext());
+        activity = this;
+        new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
 
         //DOES THIS WORK THE WAY ITS SUPPOSED TO???
         //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
@@ -223,10 +226,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                String tagName = list.get(position);
                 Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
-                nextScreen.putExtra("tag", tagName);
+                nextScreen.putExtra("tag", list.get(position));
                 nextScreen.putExtra("id", tags.get(position).getId());
+
                 startActivity(nextScreen);
             }
         });
@@ -234,7 +237,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     class TagDownloadTask extends AsyncTask<Void, Void, String> {
 
-        int type;
         List<NameValuePair> params;
 
         ProgressDialog dialog;
@@ -246,9 +248,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
         // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
 
-        public TagDownloadTask(int type, MainActivity activity){
-
-            this.type = type;
+        public TagDownloadTask(MainActivity activity){
 
             this.activity = activity;
             this.context = activity;
@@ -284,7 +284,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             String str ="";
             try{
                 stream = getRequest(url);
-                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, 2 * streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();
