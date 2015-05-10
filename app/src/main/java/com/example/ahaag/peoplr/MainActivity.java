@@ -64,9 +64,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
 
+
+        MainActivity activity = this;
+
         s = ((startUp) getApplicationContext());
         activity = this;
         new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
+
 
 
 

@@ -46,22 +46,22 @@
     android:text="@string/blurb"
     android:layout_margin="20dp"
         />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/contactInfo"
-            android:layout_below="@+id/description"
-            android:text="contact info"
-            android:layout_margin="20dp"
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/contactInfo"-->
+            <!--android:layout_below="@+id/description"-->
+            <!--android:text="contact info"-->
+            <!--android:layout_margin="20dp"-->
 
-            />
+            <!--/>-->
         <Button
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="To edit Description or contact info"
+            android:text="To edit Description"
             android:textSize="10dp"
             android:id="@+id/Button"
-            android:layout_below="@+id/contactInfo"
+            android:layout_below="@+id/description"
             android:onClick="selfDestruct"
             />
     </RelativeLayout>
