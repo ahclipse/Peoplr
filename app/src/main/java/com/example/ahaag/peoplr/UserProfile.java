@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.w3c.dom.UserDataHandler;
-
 import java.util.ArrayList;
 
 /**
@@ -51,11 +49,7 @@ public class UserProfile implements Parcelable {
 
 
 
-    public int describeContents() {
-
-        return 0;
-
-    }
+    public int describeContents() { return 0; }
 
     public void writeToParcel(Parcel dest, int flag) {
         Bundle bundle = new Bundle();
