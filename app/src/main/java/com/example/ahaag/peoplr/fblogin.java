@@ -312,8 +312,8 @@ public class fblogin extends Activity {
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(50000 /* milliseconds */);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);

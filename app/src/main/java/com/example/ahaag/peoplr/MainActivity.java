@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
@@ -189,7 +190,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     }
 
-    protected void onTagResponse(String response) throws MalformedJsonException {
+    protected void onTagResponse(String response) throws MalformedJsonException, JsonSyntaxException {
 
         Gson gson = new Gson();
 
@@ -266,6 +267,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             } catch (MalformedJsonException e) {
                 Log.w("JSON Response:  ", result);
                 new TagDownloadTask(activity).execute();
+            } catch (JsonSyntaxException e) {
+                Log.w("JSON Response:  ", result);
+                new TagDownloadTask(activity).execute();
             }
             dialog.dismiss();
         }
@@ -291,8 +295,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(50000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             // Start the query
