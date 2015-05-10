@@ -57,18 +57,13 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     ListView drawerList;
     CardContainer mCardContainer;
     int tagID;
-    int[] u;
-    //user u2;
 
     public static List<UserMin> users;
 
     List<NameValuePair> tagUpdate;
     List<NameValuePair> params;
     List<List<NameValuePair>> swipes; //TODO ENSURE THAT SWIPES DO NOT OVERWRITE EACH OTHER
-    int latestSwipe = 0;
-    int lastSent = 0;
-
-    startUp s;
+    int latestSwipe, lastSent = 0;
 
     TinderProfile activity;
 
@@ -88,7 +83,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         Intent i = getIntent();
         String tag = i.getStringExtra("tag");
         tagtext.setText(tag);
-        s = ((startUp) getApplicationContext());
         //THis is the tag id!!1
         tagID = i.getIntExtra("id", 0);
         activity = this;
@@ -97,14 +91,14 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         tagUpdate = new ArrayList<NameValuePair>();
         tagUpdate.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
-        tagUpdate.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
+        tagUpdate.add(new BasicNameValuePair("user_id", Integer.toString(startUp.getUserId()))); //TODO MAKE THIS THE REAL USER
 
         new TagUpdateTask(activity).execute();
 
         swipes = new ArrayList<List<NameValuePair>>();
         params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
-        params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
+        params.add(new BasicNameValuePair("user_id", Integer.toString(startUp.getUserId()))); //TODO MAKE THIS THE REAL USER
 
         new UserListDownloadTask(this).execute();
 
@@ -194,15 +188,14 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                     //TODO SEND SWIPE RESULT = ACCEPTED
 
                     List<NameValuePair> swipe = new ArrayList<NameValuePair>();
-                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(startUp.getUserId())));
                     swipe.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
-                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(startUp.getUserId())));
                     swipe.add(new BasicNameValuePair("matchee_id", Integer.toString(card.getId())));
                     swipe.add(new BasicNameValuePair("accepted", "true"));
 
                     swipes.add(swipe);
                     latestSwipe++;
-
                     new SwipeUpdateTask(activity).execute();
                 }
 
@@ -216,12 +209,11 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                     //TODO SEND SWIPE RESULT = REJECTED
 
                     List<NameValuePair> swipe = new ArrayList<NameValuePair>();
-                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(startUp.getUserId())));
                     swipe.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
-                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(startUp.getUserId())));
                     swipe.add(new BasicNameValuePair("matchee_id", Integer.toString(card.getId())));
                     swipe.add(new BasicNameValuePair("accepted", "false"));
-
                     swipes.add(swipe);
                     latestSwipe++;
 
@@ -233,7 +225,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         mCardContainer.setAdapter(adapter);
 
-        //TODO ADD SUPPORT TO END OF LIST....
+        //TODO ADD SUPPORT TO END OF LIST...?
     }
 
     @Override
@@ -257,7 +249,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             return true;
         }
         // Handle your other action bar items...
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -268,32 +259,18 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         drawerLayout.closeDrawer(drawerList);
         if (position == 0) {
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
-//            s.setCurrUser(cr);
-//            s.setTags(tagID,tags);//changed from pos
             startActivity(nextScreen);
         }
         if (position == 1) {
             Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
-//            s.setCurrUser(cr);
-//            s.setTags(tagID,tags);
             startActivity(nextScreen);
         }
         if (position == 2) {
             Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
-//            s.setCurrUser(cr);
-//            s.setTags(tagID,tags);
-            // Bundle b = new Bundle();
-//            b.putParcelable("currUser", cr);
-//            b.putParcelableArrayList("tag1", tag1);
-//            b.putParcelableArrayList("tag2", tag2);
-//            b.putParcelableArrayList("tag3", tag3);
-//            nextScreen.putExtras(b);
             startActivity(nextScreen);
         }
         if (position == 3) {
             Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
-//            s.setCurrUser(cr);
-//            s.setTags(tagID,tags);
             startActivity(nextScreen);
         }
     }
@@ -319,7 +296,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                     connection.connect();
                     InputStream input = connection.getInputStream();
                     Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                    images.add(myBitmap);
+                    if (myBitmap.getHeight() > myBitmap.getWidth()) images.add(Bitmap.createBitmap(myBitmap, 0, (myBitmap.getHeight() - myBitmap.getWidth())/2, myBitmap.getWidth(), myBitmap.getWidth()));
+                    else images.add(Bitmap.createBitmap(myBitmap, (myBitmap.getWidth() - myBitmap.getHeight())/2, 0, myBitmap.getHeight(), myBitmap.getHeight()));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -341,19 +319,13 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         ProgressDialog dialog;
         Context context;
         TinderProfile activity;
-
         int streamLength = 0;
-
-        // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
-        // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
 
         public UserListDownloadTask(TinderProfile activity){
 
             this.activity = activity;
             this.context = activity;
             dialog = new ProgressDialog(context);
-            //dialog.setTitle("Loading");
-            //dialog.setMessage("message");
         }
 
         protected void onPreExecute() {
@@ -395,11 +367,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                 } catch (InterruptedException f) {
                     f.printStackTrace();
                 }
-
                 new UserListDownloadTask(activity).execute();
             }
-
-
             dialog.dismiss();
         }
 
@@ -418,10 +387,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             return str;
         }
 
-        // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
-
         private InputStream postRequest(String urlString, List<NameValuePair> params) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
+
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(50000 /* milliseconds */);
@@ -441,10 +408,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             conn.connect();
             InputStream stream = conn.getInputStream();
             streamLength = conn.getContentLength();
-
             return stream;
-
-            // END_INCLUDE(get_inputstream)
         }
 
         private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
@@ -454,20 +418,15 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
             for (NameValuePair pair : params)
             {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
+                if (first) first = false;
+                else result.append("&");
 
                 result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
                 result.append("=");
                 result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
             }
-
             return result.toString();
         }
-
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
 
         /** Reads an InputStream and converts it to a String.
          * @param stream InputStream containing HTML from targeted site.
@@ -485,15 +444,11 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
-    //  int latestUserSwipe = 0;
-    //  int lastSentSwipe = 0;
-
     class SwipeUpdateTask extends AsyncTask<Void, Void, String>{
 
         Context context;
         TinderProfile activity;
         int swipeNum;
-
         int streamLength = 0;
 
         public SwipeUpdateTask(TinderProfile activity){

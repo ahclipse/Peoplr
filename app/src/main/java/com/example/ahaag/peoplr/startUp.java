@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -147,7 +148,10 @@ public class startUp extends Application {
 
     public static void loadProfilePhoto(ImageView imageView){
         if(photo == null) new ProfilePhotoDownloadTask().execute();
-        else imageView.setImageBitmap(photo);//Bitmap.createScaledBitmap(photo, 150, 150, false));
+        else {
+            if (photo.getHeight() > photo.getWidth()) imageView.setImageBitmap(Bitmap.createBitmap(photo, 0, (photo.getHeight() - photo.getWidth())/2, photo.getWidth(), photo.getWidth()));
+            else imageView.setImageBitmap(Bitmap.createBitmap(photo, (photo.getWidth() - photo.getHeight()) / 2, 0, photo.getHeight(), photo.getHeight()));
+        }
     }
 
     public static void checkBlurb(String testBlurb){
@@ -193,6 +197,7 @@ public class startUp extends Application {
 
     protected static void onUserUpdate(String result){
         //todo something?
+        Log.w("STARTUP:  ", "user data updated! " + result);
     }
 
     static class ProfilePhotoDownloadTask extends AsyncTask<Void, Void, Void> {
@@ -264,10 +269,10 @@ public class startUp extends Application {
                         params.add(new BasicNameValuePair("photo_url", url));
                         urlDirtyBit = false;
                     }
-//      TODO          if(contactInfoDirtyBit){
-//                        params.add(new BasicNameValuePair("contact_info", contactInfo));
-//                        contactInfoDirtyBit = false;
-//                    }
+                    if(contactInfoDirtyBit){
+                        params.add(new BasicNameValuePair("contact_info", contactInfo));
+                        contactInfoDirtyBit = false;
+                    }
                     if(params.size() > 0){
                         params.add(new BasicNameValuePair("user_id", Integer.toString(id)));
                         destUrl = "http://peoplr-eisendrachen00-4.c9.io/update_user";
@@ -343,6 +348,7 @@ public class startUp extends Application {
                 result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
             }
 
+            Log.w("STARTUP:  ", "getQuery() passing " + result.toString());
             return result.toString();
         }
 

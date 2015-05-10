@@ -15,23 +15,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-
-import java.util.List;
-
 
 public class MyProfile extends Activity implements AdapterView.OnItemClickListener {
+
     final String drawerTitle = "Navigation";
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
-    UserProfile cr;
     int id;
-    //user currUser;
-    List<NameValuePair> params;
-    User user;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +31,6 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
         setContentView(R.layout.activity_my_profile);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-
-        //new UserDownloadTask(this).execute();
 
         TextView username = (TextView) findViewById(R.id.username);
         username.setText(startUp.getName());
@@ -142,6 +132,5 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
             startActivity(nextScreen);
         }
     }
-
 }
 
