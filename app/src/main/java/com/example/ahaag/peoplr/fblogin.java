@@ -58,9 +58,8 @@ public class fblogin extends Activity {
     String first_name;
     String last_name;
     String picture;
-    String id;
+    String fbId;
     Context currContext;
-    startUp s;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,8 +80,6 @@ public class fblogin extends Activity {
         //final Context currContext = this;
         currContext = this;
 
-        s = ((startUp) getApplicationContext());
-
         activity = this;
         callbackManager = CallbackManager.Factory.create();
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
@@ -99,14 +96,15 @@ public class fblogin extends Activity {
                                     public void onCompleted(JSONObject object,
                                                             GraphResponse response) {
                                         // Application code String id = Profile.getCurrentProfile().getId();
-                                        id = Profile.getCurrentProfile().getId();
+                                        fbId = Profile.getCurrentProfile().getId();
                                         first_name = Profile.getCurrentProfile().getFirstName();
                                         last_name = Profile.getCurrentProfile().getLastName();
-                                        picture = "http://graph.facebook.com/" + id + "/picture?type=large";
+                                        picture = "http://graph.facebook.com/" + fbId + "/picture?type=large";
                                         //Log.w("STUFF", "HERE: " + id + " " + " " + first_name + " " + last_name + " " + picture);
 
                                         String name = first_name + " " + last_name;
-                                        startUp.createUser(id, name, latitude, longitude, picture, currContext);
+                                        startUp.createUser(fbId, name, latitude, longitude, picture, currContext);
+                                        // to log in as a demo user, replace fbId w/ Integer.toString(THEIR FB ID)
 
 //                                        params = new ArrayList<NameValuePair>();
 //                                        params.add(new BasicNameValuePair("fb_access_token", id));
@@ -170,9 +168,9 @@ public class fblogin extends Activity {
         Type listType = new TypeToken<List<User>>(){}.getType();
         users = (List<User>) gson.fromJson(jsonOutput, listType);
 
-        s.setUserId(users.get(0).getId());
+        startUp.setUserId(users.get(0).getId());
 
-        Log.w("Confirm User ID Set", "YES! User ID = " + s.getUserId());
+        Log.w("Confirm User ID Set", "YES! User ID = " + startUp.getUserId());
 
         //Progress from the Login to the MainActivity
         Intent intent = new Intent(currContext, MainActivity.class);

@@ -5,8 +5,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -121,40 +123,44 @@ public class startUp extends Application {
         url = new_url;
         context = new_context;
         new UserSetTask(context).execute();
+        new ProfilePhotoDownloadTask().execute();
     }
 
-    public void updateUser(Context context){
+    public static void updateUser(Context context){
         if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit){
             // call the thiiiing
-            new UserSetTask(this).execute(); // todo um
+            new UserSetTask(context).execute();
+             if(urlDirtyBit){
+                 new ProfilePhotoDownloadTask().execute(); // todo um
+             }
         }
     }
 
-    public void loadPhoto(){
-        //todo soonish
+    public static void loadProfilePhoto(ImageView imageView){
+        imageView.setImageBitmap(photo);
     }
 
-    public void checkBlurb(String blurb){
-        if(!this.blurb.equals(blurb)){
-            this.blurb = blurb;
+    public static void checkBlurb(String testBlurb){
+        if(!blurb.equals(testBlurb)){
+            blurb = testBlurb;
             blurbDirtyBit = true;
         }
     }
 
-    public void checkLocation(double latitude, double longitude){
-        if(this.latitude != latitude){
-            this.latitude = latitude;
+    public static void checkLocation(double testLatitude, double testLongitude){
+        if(latitude != testLatitude){
+            latitude = testLatitude;
             latitudeDirtyBit = true;
         }
-        if(this.longitude != longitude){
-            this.longitude = longitude;
+        if(longitude != testLongitude){
+            longitude = testLongitude;
             longitudeDirtyBit = true;
         }
     }
 
-    public void checkUrl(String url){
-        if(!this.url.equals(url)){
-            this.url = url;
+    public static void checkUrl(String testUrl){
+        if(!url.equals(testUrl)){
+            url = testUrl;
             urlDirtyBit = true;
         }
     }
@@ -176,6 +182,27 @@ public class startUp extends Application {
 
     protected static void onUserUpdate(String result){
         //todo something?
+    }
+
+    static class ProfilePhotoDownloadTask extends AsyncTask<Void, Void, Void> {
+
+        public ProfilePhotoDownloadTask() {}
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                URL urlConnection = new URL(url);
+                HttpURLConnection connection = (HttpURLConnection) urlConnection
+                        .openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                photo = BitmapFactory.decodeStream(input);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     static class UserSetTask extends AsyncTask<Void, Void, String> {

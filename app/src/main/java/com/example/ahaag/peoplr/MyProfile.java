@@ -5,15 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
-
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,14 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.andtinder.model.CardModel;
-import com.andtinder.model.Orientations;
-import com.andtinder.view.CardContainer;
-import com.andtinder.view.SimpleCardStackAdapter;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
-
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -47,9 +35,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -77,14 +63,12 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-
-        startUp s = ((startUp) getApplicationContext());
         //USED TO GET CORRECT USER
-        id = s.getUserId();
+        id = startUp.getUserId();
         params = new ArrayList<NameValuePair>();
 
         //String st="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
-        params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
+        params.add(new BasicNameValuePair("user_id", Integer.toString(startUp.getUserId()))); //TODO MAKE THIS THE REAL USER
 //=======
 //        startUp s=((startUp)getApplicationContext());
 //        //USED TO GET CORRECT USER
@@ -120,7 +104,8 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
 
         //new ImageLoadTask(currUser.photo_url, im, true).execute();
 
-        //ImageView im=(ImageView) findViewById(R.id.imageView1);
+        ImageView imageview = (ImageView) findViewById(R.id.imageView1);
+        startUp.loadProfilePhoto(imageview);
 
        // new ImageLoadTask(currUser.getPhoto_url(), im, true).execute();
 //>>>>>>> 01d21f2afb5724abf03433376cfba50484557c91
