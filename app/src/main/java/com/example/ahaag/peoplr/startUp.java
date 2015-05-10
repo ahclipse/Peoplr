@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -120,7 +121,7 @@ public class startUp extends Application {
         name = new_name;
         latitude = new_latitude;
         longitude = new_longitude;
-        url = new_url;
+        url = new_url; //new_url;
         context = new_context;
         new UserSetTask(context).execute();
         new ProfilePhotoDownloadTask().execute();
@@ -137,7 +138,8 @@ public class startUp extends Application {
     }
 
     public static void loadProfilePhoto(ImageView imageView){
-        imageView.setImageBitmap(photo);
+        if(photo == null) new ProfilePhotoDownloadTask().execute();
+        else imageView.setImageBitmap(Bitmap.createScaledBitmap(photo, 150, 150, false));
     }
 
     public static void checkBlurb(String testBlurb){
@@ -190,14 +192,28 @@ public class startUp extends Application {
 
         @Override
         protected Void doInBackground(Void... params) {
+            URL Aurl = null;
             try {
-                URL urlConnection = new URL(url);
-                HttpURLConnection connection = (HttpURLConnection) urlConnection
-                        .openConnection();
+//                URL urlConnection = new URL(url);
+//                HttpURLConnection connection = (HttpURLConnection) urlConnection
+//                        .openConnection();
+//                connection.setDoInput(true);
+//                connection.connect();
+//                InputStream input = connection.getInputStream();
+//                photo = BitmapFactory.decodeStream(input);
+
+                Log.w("URL TEXT: ", url);
+                Aurl = new URL(url);
+                if(Aurl == null) Log.w("GODDAMMIT ", "IT'S FUCKING NULL");
+                HttpURLConnection connection = (HttpURLConnection) Aurl.openConnection();
                 connection.setDoInput(true);
+                connection.setInstanceFollowRedirects(true);
                 connection.connect();
-                InputStream input = connection.getInputStream();
-                photo = BitmapFactory.decodeStream(input);
+                InputStream inputStream = connection.getInputStream();
+                photo = BitmapFactory.decodeStream(inputStream);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                Log.w("THE URL: ", Aurl.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }

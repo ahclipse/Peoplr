@@ -89,6 +89,7 @@ public class fblogin extends Activity {
                     public void onSuccess(LoginResult loginResult) {
                        Log.e("FB INFO", loginResult.toString());
                         String accessToken= loginResult.getAccessToken().getToken();
+                        Log.w("ACCESS TOKEN: ", accessToken);
                         GraphRequest request = GraphRequest.newMeRequest(
                                 AccessToken.getCurrentAccessToken(),
                                 new GraphRequest.GraphJSONObjectCallback() {
@@ -97,10 +98,20 @@ public class fblogin extends Activity {
                                                             GraphResponse response) {
                                         // Application code String id = Profile.getCurrentProfile().getId();
                                         fbId = Profile.getCurrentProfile().getId();
+
+                                        Log.w("FB ID #1: ", fbId);
+                                        Log.w("FB ID #2: ", "" + Profile.getCurrentProfile().getLinkUri());
+                                        Log.w("FB ID #3: ", "" + Profile.getCurrentProfile().getProfilePictureUri(50,50));
+                                        Log.w("FB ID #4: ", "" + Profile.getCurrentProfile().describeContents());
+                                        Log.w("FB ID #5: ", "" + Profile.getCurrentProfile().hashCode());
+                                        Log.w("FB ID #6: ", "" + Profile.getCurrentProfile().toString());
+                                        //.target_id());
                                         first_name = Profile.getCurrentProfile().getFirstName();
                                         last_name = Profile.getCurrentProfile().getLastName();
                                         picture = "http://graph.facebook.com/" + fbId + "/picture?type=large";
                                         //Log.w("STUFF", "HERE: " + id + " " + " " + first_name + " " + last_name + " " + picture);
+
+                                        //picture = Profile.getCurrentProfile().getProfilePictureUri(150, 150).toString();
 
                                         String name = first_name + " " + last_name;
                                         startUp.createUser(fbId, name, latitude, longitude, picture, currContext);
