@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
+import android.util.MalformedJsonException;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +27,7 @@ import com.andtinder.model.Orientations;
 import com.andtinder.view.CardContainer;
 import com.andtinder.view.SimpleCardStackAdapter;
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
@@ -56,9 +58,9 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     CardContainer mCardContainer;
     int tagID;
     int[] u;
-    user u2;
+    //user u2;
 
-    public static List<User> users;
+    public static List<UserMin> users;
 
     List<NameValuePair> tagUpdate;
     List<NameValuePair> params;
@@ -79,7 +81,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         setContentView(R.layout.activity_tinder_profile);
 
         Toast.makeText(getApplicationContext(),
-                "Swipe right to like and left to dislike", Toast.LENGTH_LONG)
+                "Swipe right to approve or left to reject matches", Toast.LENGTH_LONG)
                 .show();
 
         TextView tagtext = (TextView) findViewById(R.id.tagtext);
@@ -140,17 +142,17 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
     }
 
-    protected void onUserListResponse(String response){
+    protected void onUserListResponse(String response) throws MalformedJsonException, JsonSyntaxException {
 
         Gson gson = new Gson();
 
         String jsonOutput = response.trim();
-        Type listType = new TypeToken<List<User>>(){}.getType();
-        users = (List<User>) gson.fromJson(jsonOutput, listType);
+        Type listType = new TypeToken<List<UserMin>>(){}.getType();
+        users = (List<UserMin>) gson.fromJson(jsonOutput, listType);
 
         final ArrayList<String> list = new ArrayList<String>();
         final ArrayList<String> imageUrls = new ArrayList<String>();
-        for (User u : users) {
+        for (UserMin u : users) {
             list.add(u.getName());
             imageUrls.add(u.getPhoto_url());
         }
@@ -163,7 +165,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             e.printStackTrace();
         }
 
-        Toast.makeText(getApplicationContext(), (String) list.toString(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), (String) list.toString(), Toast.LENGTH_LONG).show();
         //TODO
     }
 
@@ -186,7 +188,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                 @Override
                 public void onLike() {
                     Toast.makeText(getApplicationContext(),
-                            "Liked", Toast.LENGTH_LONG)
+                            "APPROVED", Toast.LENGTH_LONG)
                             .show();
 
                     //TODO SEND SWIPE RESULT = ACCEPTED
@@ -208,7 +210,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                 public void onDislike() {
                     // Log.i("Swipeable Cards","I dislike the card");
                     Toast.makeText(getApplicationContext(),
-                            "Disliked", Toast.LENGTH_LONG)
+                            "REJECTED", Toast.LENGTH_LONG)
                             .show();
 
                     //TODO SEND SWIPE RESULT = REJECTED
@@ -332,59 +334,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
-    private class User {
-
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
-
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        @SerializedName("blurb")
-        private String blurb;
-
-        @SerializedName("fb_access_token")
-        private String fb_access_token;
-
-        @SerializedName("latitude")
-        private String latitude;
-
-        @SerializedName("longitude")
-        private String longitude;
-
-        @SerializedName("photo_url")
-        private String photo_url;
-
-        public final Integer getId() {
-            return Integer.parseInt(this.id);
-        }
-        public final String getName() {
-            return this.name;
-        }
-        public final String getBlurb() {
-            return this.blurb;
-        }
-        public final String getFb_access_token() {
-            return this.fb_access_token;
-        }
-        public final String getLatitude() {
-            return this.latitude;
-        }
-        public final String getLongitude() {
-            return this.longitude;
-        }
-        public final String getPhoto_url() {
-            return this.photo_url;
-        }
-
-    }
-
     //TODO GET SOME USERRRRRS
 
     class UserListDownloadTask extends AsyncTask<Void, Void, String> {
@@ -414,7 +363,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         @Override
         protected String doInBackground(Void... args) {
             try {
-                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_users_for_swiping");
+                // return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_users_for_swiping");
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_users_for_swiping_min");
             } catch (IOException e) {
                 return ("Connection error!");
             }
@@ -423,8 +373,34 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         @Override
         protected void onPostExecute(String result) {
 
-            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
-            onUserListResponse(result);
+            //TODO MESSAGE IF NEW MATCH CREATED?
+            //Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+
+            try {
+                onUserListResponse(result);
+            } catch (MalformedJsonException e) {
+                Log.w("JSON Response:  ", result);
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException f) {
+                    f.printStackTrace();
+                }
+
+                new UserListDownloadTask(activity).execute();
+
+            } catch (JsonSyntaxException e) {
+                Log.w("JSON Response:  ", result);
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException f) {
+                    f.printStackTrace();
+                }
+
+                new UserListDownloadTask(activity).execute();
+            }
+
             dialog.dismiss();
         }
 
@@ -449,8 +425,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(50000 /* milliseconds */);
-            conn.setConnectTimeout(50000 /* milliseconds */);
+            conn.setReadTimeout(60000 /* milliseconds */);
+            conn.setConnectTimeout(60000 /* milliseconds */);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -543,7 +519,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
         }
 
         /** Initiates the fetch operation. */
@@ -650,7 +626,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
         }
 
         /** Initiates the fetch operation. */

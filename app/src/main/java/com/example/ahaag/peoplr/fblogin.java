@@ -22,7 +22,6 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
@@ -74,8 +73,9 @@ public class fblogin extends Activity {
              latitude = location.getLatitude();
         }
         catch (NullPointerException e){
-             longitude = 89.4;
-             latitude = 43.0667;
+            // if you're having issues, pretend you're in madison...
+            longitude = 89.4;
+            latitude = 43.0667;
         }
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
@@ -156,58 +156,58 @@ public class fblogin extends Activity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private class User {
-
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
-
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        @SerializedName("blurb")
-        private String blurb;
-
-        @SerializedName("fb_access_token")
-        private String fb_access_token;
-
-        @SerializedName("latitude")
-        private String latitude;
-
-        @SerializedName("longitude")
-        private String longitude;
-
-        @SerializedName("photo_url")
-        private String photo_url;
-
-        public final Integer getId() {
-            return Integer.parseInt(this.id);
-        }
-        public final String getName() {
-            return this.name;
-        }
-        public final String getBlurb() {
-            return this.blurb;
-        }
-        public final String getFb_access_token() {
-            return this.fb_access_token;
-        }
-        public final String getLatitude() {
-            return this.latitude;
-        }
-        public final String getLongitude() {
-            return this.longitude;
-        }
-        public final String getPhoto_url() {
-            return this.photo_url;
-        }
-
-    }
+//    private class User {
+//
+//        @SerializedName("updated_at")
+//        private String updated_at;
+//
+//        @SerializedName("created_at")
+//        private String created_at;
+//
+//        @SerializedName("id")
+//        private String id;
+//
+//        @SerializedName("name")
+//        private String name;
+//
+//        @SerializedName("blurb")
+//        private String blurb;
+//
+//        @SerializedName("fb_access_token")
+//        private String fb_access_token;
+//
+//        @SerializedName("latitude")
+//        private String latitude;
+//
+//        @SerializedName("longitude")
+//        private String longitude;
+//
+//        @SerializedName("photo_url")
+//        private String photo_url;
+//
+//        public final Integer getId() {
+//            return Integer.parseInt(this.id);
+//        }
+//        public final String getName() {
+//            return this.name;
+//        }
+//        public final String getBlurb() {
+//            return this.blurb;
+//        }
+//        public final String getFb_access_token() {
+//            return this.fb_access_token;
+//        }
+//        public final String getLatitude() {
+//            return this.latitude;
+//        }
+//        public final String getLongitude() {
+//            return this.longitude;
+//        }
+//        public final String getPhoto_url() {
+//            return this.photo_url;
+//        }
+//
+//    }
 
     protected void onUserCreate(String result){
         //set user id

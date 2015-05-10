@@ -3,11 +3,9 @@ package com.example.ahaag.peoplr;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,7 +30,7 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 
     int id;
     int[] u;
-    user u2;
+    User u2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +53,8 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
             //get user with id u[i]
             String st2="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
             Gson gson2 = new Gson();
-            u2 = gson2.fromJson(st2, user.class);
-            list.add(u2.name);
+            u2 = gson2.fromJson(st2, User.class);
+            list.add(u2.getName());
         }
 
         listview = (ListView) findViewById(R.id.fragmentContainer);

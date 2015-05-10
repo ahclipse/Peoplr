@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -168,11 +167,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     public class Tag {
 
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
+//        @SerializedName("updated_at")
+//        private String updated_at;
+//
+//        @SerializedName("created_at")
+//        private String created_at;
 
         @SerializedName("id")
         private String id;
@@ -251,36 +250,60 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         @Override
         protected String doInBackground(Void... args) {
             try {
-                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags", false, params);
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags");
             } catch (IOException e) {
-                return ("Connection error!");
+
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException f) {
+                    e.printStackTrace();
+                }
+
+                new TagDownloadTask(activity).execute();
+                //return ("Connection error!");
             }
+            return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
 
-            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+            //Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
 
             try {
                 onTagResponse(result);
             } catch (MalformedJsonException e) {
                 Log.w("JSON Response:  ", result);
+
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException f) {
+                    f.printStackTrace();
+                }
+
                 new TagDownloadTask(activity).execute();
+
             } catch (JsonSyntaxException e) {
                 Log.w("JSON Response:  ", result);
+
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException f) {
+                    f.printStackTrace();
+                }
+
                 new TagDownloadTask(activity).execute();
             }
             dialog.dismiss();
         }
 
         /** Initiates the fetch operation. */
-        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
+        private String loadFromNetwork(String url) throws IOException {
             InputStream stream = null;
             String str ="";
             try{
                 stream = getRequest(url);
-                str = readIt(stream, streamLength + 66); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, 4000); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -295,8 +318,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(50000 /* milliseconds */);
-            conn.setConnectTimeout(50000 /* milliseconds */);
+            conn.setReadTimeout(40000 /* milliseconds */);
+            conn.setConnectTimeout(40000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             // Start the query
