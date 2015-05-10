@@ -1,6 +1,7 @@
 package com.example.ahaag.peoplr;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -15,15 +16,17 @@ public class EditInfo extends Activity {
     EditText de;
     EditText co;
     UserProfile cr;
+    startUp s;
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_info);
-        startUp s=((startUp)getApplicationContext());
+         s=((startUp)getApplicationContext());
         //cr=s.getCurrUser();
-
+            context=this;
          de=(EditText) findViewById(R.id.dEdit);
-         co=(EditText) findViewById(R.id.cEdit);
+        // co=(EditText) findViewById(R.id.cEdit);
       Button  b = (Button) findViewById(R.id.Button);
 
         b.setOnClickListener(new View.OnClickListener()
@@ -31,13 +34,14 @@ public class EditInfo extends Activity {
             public void onClick(View v)
             {
                 String des=de.getText().toString();
-                String con=co.getText().toString();
+               // String con=co.getText().toString();
                 if  (!des.equals("")) {
-                    //cr.setDescription(des);
+                    startUp.setBlurb(des);
+                    startUp.updateUser(context);
                 }
-                if (!con.equals("")) {
-                    //cr.setContactInfo(con);
-                }
+//                if (!con.equals("")) {
+//                    //cr.setContactInfo(con);
+//                }
                 Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
                 startActivity(nextScreen);
 

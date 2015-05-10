@@ -53,7 +53,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ArrayList tag3;
 
     MainActivity activity;
-    startUp s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +66,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         MainActivity activity = this;
 
-        s = ((startUp) getApplicationContext());
         activity = this;
         new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
 
