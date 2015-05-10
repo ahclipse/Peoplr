@@ -101,15 +101,13 @@ public class fblogin extends Activity {
                                     public void onCompleted(JSONObject object,
                                                             GraphResponse response) {
                                         // Application code String id = Profile.getCurrentProfile().getId();
-                                        String FBid = Profile.getCurrentProfile().getId();
-                                        String FBfirst_name = Profile.getCurrentProfile().getFirstName();
-                                        String FBlast_name = Profile.getCurrentProfile().getLastName();
-                                        String FBpicture = Profile.getCurrentProfile().getProfilePictureUri(50, 50).toString();
-                                        Log.w("STUFF", "HERE: " + FBid + " " + " " + FBfirst_name + " " + FBlast_name + " " + FBpicture);
-                                        id = FBid;
-                                        first_name = FBfirst_name;
-                                        last_name = FBlast_name;
-                                        picture = FBpicture;
+                                        id = Profile.getCurrentProfile().getId();
+                                        first_name = Profile.getCurrentProfile().getFirstName();
+                                        last_name = Profile.getCurrentProfile().getLastName();
+                                        //picture = Profile.getCurrentProfile().getProfilePictureUri(50, 50).toString();
+
+                                        picture = "http://graph.facebook.com/" + id + "/picture?type=large";
+                                        Log.w("STUFF", "HERE: " + id + " " + " " + first_name + " " + last_name + " " + picture);
 
                                         params = new ArrayList<NameValuePair>();
                                         params.add(new BasicNameValuePair("fb_access_token", id));
