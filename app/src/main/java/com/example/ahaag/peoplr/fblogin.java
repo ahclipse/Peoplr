@@ -22,11 +22,9 @@ import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -104,19 +102,20 @@ public class fblogin extends Activity {
                                         id = Profile.getCurrentProfile().getId();
                                         first_name = Profile.getCurrentProfile().getFirstName();
                                         last_name = Profile.getCurrentProfile().getLastName();
-                                        //picture = Profile.getCurrentProfile().getProfilePictureUri(50, 50).toString();
-
                                         picture = "http://graph.facebook.com/" + id + "/picture?type=large";
-                                        Log.w("STUFF", "HERE: " + id + " " + " " + first_name + " " + last_name + " " + picture);
+                                        //Log.w("STUFF", "HERE: " + id + " " + " " + first_name + " " + last_name + " " + picture);
 
-                                        params = new ArrayList<NameValuePair>();
-                                        params.add(new BasicNameValuePair("fb_access_token", id));
-                                        params.add(new BasicNameValuePair("name", first_name + " " + last_name)); //TODO MAKE THIS THE REAL USER
-                                        params.add(new BasicNameValuePair("photo_url", picture)); //ProfPic
-                                        params.add(new BasicNameValuePair("latitude", Double.toString(latitude)));
-                                        params.add(new BasicNameValuePair("longitude", Double.toString(longitude)));
+                                        String name = first_name + " " + last_name;
+                                        startUp.createUser(id, name, latitude, longitude, picture, currContext);
 
-                                        new UserCreateTask(activity).execute();
+//                                        params = new ArrayList<NameValuePair>();
+//                                        params.add(new BasicNameValuePair("fb_access_token", id));
+//                                        params.add(new BasicNameValuePair("name", first_name + " " + last_name)); //TODO MAKE THIS THE REAL USER
+//                                        params.add(new BasicNameValuePair("photo_url", picture)); //ProfPic
+//                                        params.add(new BasicNameValuePair("latitude", Double.toString(latitude)));
+//                                        params.add(new BasicNameValuePair("longitude", Double.toString(longitude)));
+//
+//                                        new UserCreateTask(activity).execute();
 
                                         //Thread.sleep(1000);
 
@@ -156,57 +155,9 @@ public class fblogin extends Activity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private class User {
-
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
-
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        @SerializedName("blurb")
-        private String blurb;
-
-        @SerializedName("fb_access_token")
-        private String fb_access_token;
-
-        @SerializedName("latitude")
-        private String latitude;
-
-        @SerializedName("longitude")
-        private String longitude;
-
-        @SerializedName("photo_url")
-        private String photo_url;
-
-        public final Integer getId() {
-            return Integer.parseInt(this.id);
-        }
-        public final String getName() {
-            return this.name;
-        }
-        public final String getBlurb() {
-            return this.blurb;
-        }
-        public final String getFb_access_token() {
-            return this.fb_access_token;
-        }
-        public final String getLatitude() {
-            return this.latitude;
-        }
-        public final String getLongitude() {
-            return this.longitude;
-        }
-        public final String getPhoto_url() {
-            return this.photo_url;
-        }
-
+    protected void advanceToMain(){
+        Intent intent = new Intent(currContext, MainActivity.class);
+        startActivity(intent);
     }
 
     protected void onUserCreate(String result){
