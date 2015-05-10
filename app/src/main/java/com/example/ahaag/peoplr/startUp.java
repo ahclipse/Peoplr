@@ -9,12 +9,25 @@ public class startUp extends Application {
 
 
 
-        int userId=9;
+
+        int userId=11;
+
+   // private int userId = -1;
 
 
-    public int getUserId(){ return userId;}
-    public void setUserId(int i){ userId=i;}
 
-//    }
+    public int getUserId(){
+        return userId;
+    }
+
+    public void setUserId(int userId){
+        this.userId=userId;
+    }
+
+// // set
+    //((MyApplication) this.getApplication()).setSomeVariable("foo");
+
+    // get
+    //String s = ((MyApplication) this.getApplication()).getSomeVariable();   }
 
 }

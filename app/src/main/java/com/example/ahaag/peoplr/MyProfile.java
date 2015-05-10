@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,9 +13,10 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,6 +34,7 @@ import com.andtinder.view.SimpleCardStackAdapter;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -64,7 +67,7 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
     int id;
     //user currUser;
     List<NameValuePair> params;
-    public static User user;
+    User user;
 
 
     @Override
@@ -74,11 +77,30 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
+
         startUp s = ((startUp) getApplicationContext());
         //USED TO GET CORRECT USER
         id = s.getUserId();
+        params = new ArrayList<NameValuePair>();
+
         //String st="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
         params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
+//=======
+//        startUp s=((startUp)getApplicationContext());
+//        //USED TO GET CORRECT USER
+//        id=s.getUserId();
+//        String st="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
+//        Gson gson = new Gson();
+//        currUser= gson.fromJson(st, User.class);
+//        TextView username = (TextView) findViewById(R.id.username);
+//        username.setText(currUser.getName());
+////    TextView contactInfo=(TextView) findViewById(R.id.contactInfo);
+////    contactInfo.setText(cr.getContactInfo());
+//        TextView description=(TextView) findViewById(R.id.description);
+//        //if not null!
+//        if (currUser.getBlurb()!=null)
+//            description.setText(currUser.getBlurb());
+//>>>>>>> 01d21f2afb5724abf03433376cfba50484557c91
 
         new UserDownloadTask(this).execute();
 //    Gson gson = new Gson();
@@ -93,9 +115,15 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
 //    description.setText(currUser.blurb);
 
 
+//<<<<<<< HEAD
         // ImageView im=(ImageView) findViewById(R.id.imageView1);
 
         //new ImageLoadTask(currUser.photo_url, im, true).execute();
+
+        //ImageView im=(ImageView) findViewById(R.id.imageView1);
+
+       // new ImageLoadTask(currUser.getPhoto_url(), im, true).execute();
+//>>>>>>> 01d21f2afb5724abf03433376cfba50484557c91
 
 
         //im.setImageDrawable(d);
@@ -172,6 +200,7 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         getActionBar().setTitle(fragmentNames[position]);
         drawerLayout.closeDrawer(drawerList);
+
         if (position == 0) {
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(nextScreen);
@@ -194,8 +223,8 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
         Gson gson = new Gson();
 
         String jsonOutput = response.trim();
-        Type listType = new TypeToken<User>(){}.getType();
-        user = (User) gson.fromJson(jsonOutput, listType);
+        //Type listType = new TypeToken<List<User>>(){}.getType();
+        user = (User) gson.fromJson(jsonOutput, User.class);
 
         //final ArrayList<String> list = new ArrayList<String>();
         final ArrayList<String> imageUrls = new ArrayList<String>();
@@ -210,11 +239,30 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+//=======
+//        if (position==0){
+//            Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
+//            startActivity(nextScreen);
+//        }
+//        if (position==1){
+//            Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
+//            startActivity(nextScreen);
+//        }
+//        if (position==2){
+//            Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
+//            startActivity(nextScreen);
+//        }
+//        if (position==3){
+//            Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
+//            startActivity(nextScreen);
+//>>>>>>> 01d21f2afb5724abf03433376cfba50484557c91
         }
-
-       // Toast.makeText(getApplicationContext(), (String) list.toString(), Toast.LENGTH_LONG).show();
-        //TODO
     }
+
+//<<<<<<< HEAD
+//       // Toast.makeText(getApplicationContext(), (String) list.toString(), Toast.LENGTH_LONG).show();
+//        //TODO
+//    }
 
     protected void onLoadImages(List<Bitmap> images){
 
@@ -408,8 +456,8 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(50000 /* milliseconds */);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -468,4 +516,6 @@ public class MyProfile extends Activity implements AdapterView.OnItemClickListen
             return new String(buffer);
         }
     }
+
 }
+

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
@@ -50,7 +51,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ArrayList tag1;
     ArrayList tag2;
     ArrayList tag3;
-    //tags[] myTags;
+
+    MainActivity activity;
+    startUp s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,32 +64,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
 
+
         MainActivity activity = this;
-      //  new TagDownloadTask(3, activity).execute(); // listview? null will be params eventually...
+
+        s = ((startUp) getApplicationContext());
+        activity = this;
+        new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
 
 
-        //DOES THIS WORK THE WAY ITS SUPPOSED TO???
-        //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
-//        GraphRequest request = GraphRequest.newMeRequest(
-//                AccessToken.getCurrentAccessToken(),
-//                new GraphRequest.GraphJSONObjectCallback() {
-//                    @Override
-//                    public void onCompleted(
-//                            JSONObject object,
-//                            GraphResponse response) {
-//                        // Application code
-//                    }
-//                });
-//        Bundle parameters = new Bundle();
-//        parameters.putString("fields", "id,name,email,picture");//access_token?
-//       //I THINK ^^^^ IS ALL I NEED
-//        request.setParameters(parameters);
-//        request.executeAsync();
 
 
         // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
         try {
-            Thread.sleep(30);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -178,40 +168,16 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     }
 
-    public class Tag {
-
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
-
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        public final Integer getId() {
-            return Integer.parseInt(this.id);
-        }
-
-        public final String getName() {
-            return this.name;
-        }
-
-    }
-
-    protected void onTagResponse(String response){
+    protected void onTagResponse(String response) {
 
         Gson gson = new Gson();
 
         String jsonOutput = response.trim();
-        Type listType = new TypeToken<List<Tag>>(){}.getType();
-        final List<Tag> tags = (List<Tag>) gson.fromJson(jsonOutput, listType);
+        Type listType = new TypeToken<List<TagMin>>(){}.getType();
+        final List<TagMin> tags = (List<TagMin>) gson.fromJson(jsonOutput, listType);
 
         final ArrayList<String> list = new ArrayList<String>();
-        for (Tag t : tags) {
+        for (TagMin t : tags) {
             list.add(t.getName());
         }
 
@@ -224,18 +190,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                String tagName = list.get(position);
                 Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
-                nextScreen.putExtra("tag", tagName);
+                nextScreen.putExtra("tag", list.get(position));
                 nextScreen.putExtra("id", tags.get(position).getId());
+
                 startActivity(nextScreen);
             }
         });
+
     }
 
     class TagDownloadTask extends AsyncTask<Void, Void, String> {
 
-        int type;
         List<NameValuePair> params;
 
         ProgressDialog dialog;
@@ -247,9 +213,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
         // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
 
-        public TagDownloadTask(int type, MainActivity activity){
-
-            this.type = type;
+        public TagDownloadTask(MainActivity activity){
 
             this.activity = activity;
             this.context = activity;
@@ -265,8 +229,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         @Override
         protected String doInBackground(Void... args) {
             try {
-                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags", false, params);
+                //return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags");
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_tags_min");
             } catch (IOException e) {
+                e.printStackTrace();
+
                 return ("Connection error!");
             }
         }
@@ -275,17 +242,23 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         protected void onPostExecute(String result) {
 
             Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
-            onTagResponse(result);
+
+            try {
+                onTagResponse(result);
+            } catch (JsonSyntaxException e) {
+                Log.w("JSON Response:  ", result);
+                //new TagDownloadTask(activity).execute();
+            }
             dialog.dismiss();
         }
 
         /** Initiates the fetch operation. */
-        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
+        private String loadFromNetwork(String url) throws IOException {
             InputStream stream = null;
             String str ="";
             try{
                 stream = getRequest(url);
-                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, streamLength + 66); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -300,8 +273,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             // BEGIN_INCLUDE(get_inputstream)
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setReadTimeout(50000 /* milliseconds */);
+            conn.setConnectTimeout(50000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             // Start the query

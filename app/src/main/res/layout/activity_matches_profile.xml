@@ -23,8 +23,9 @@
             android:layout_height="wrap_content"
             android:textSize="30dp"
             android:text="name"
+
             android:background="#ffff"
-            android:layout_alignBottom="@+id/butt"
+            android:layout_below="@+id/butt"
             android:layout_centerHorizontal="true" />
 
         <ImageView
