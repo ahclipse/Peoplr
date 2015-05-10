@@ -2,11 +2,13 @@ package com.example.ahaag.peoplr;
 
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -38,7 +40,7 @@ public class startUp extends Application {
 
     private static String fb_access_token = "";
    private static int id = -1;
-//   private static int id = 9;
+//   private static int id = 30;
     private static String name = "";
     private static String blurb = "";
     private static double latitude = 0;
@@ -159,7 +161,7 @@ public class startUp extends Application {
     }
 
 //<<<<<<< HEAD
-//       //int userId=14;
+      //int userId=14;
 //
 //   private int userId = -1;
 //=======
@@ -236,13 +238,16 @@ public class startUp extends Application {
         List<NameValuePair> params;
         String destUrl = "";
 
+
         public UserSetTask(Context context){
             this.context = context;
+            Log.w("UserCreateTask", "In Constructor");
         }
 
         @Override
         protected void onPreExecute() {
             //todo something?
+
         }
 
         @Override
@@ -302,6 +307,7 @@ public class startUp extends Application {
             } else { // DON'T REALLY NEED TO DO ANYTHING TBH
                 onUserUpdate(result);
             }
+
         }
 
         /** Initiates the fetch operation. */

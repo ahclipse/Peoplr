@@ -18,22 +18,24 @@ public class EditInfo extends Activity {
     UserProfile cr;
     startUp s;
     Context context;
+    String des;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_info);
          s=((startUp)getApplicationContext());
         //cr=s.getCurrUser();
-            context=this;
+
          de=(EditText) findViewById(R.id.dEdit);
         // co=(EditText) findViewById(R.id.cEdit);
+        context=this;
       Button  b = (Button) findViewById(R.id.Button);
 
         b.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                String des=de.getText().toString();
+                 des=de.getText().toString();
                // String con=co.getText().toString();
                 if  (!des.equals("")) {
                     startUp.setBlurb(des);

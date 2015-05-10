@@ -101,8 +101,8 @@ public class fblogin extends Activity {
                 });
 
 
-//        Intent intent = new Intent(currContext, MainActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(context, MainActivity.class);
+        startActivity(intent);
 
 
     }
