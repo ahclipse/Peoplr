@@ -128,8 +128,8 @@ public class fblogin extends Activity {
                         //I think this works... Idk atm
 
                         //Progress from the Login to the MainActivity
-                        //Intent intent = new Intent(currContext, MainActivity.class);
-                        //startActivity(intent);
+                        Intent intent = new Intent(currContext, MainActivity.class);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -149,8 +149,8 @@ public class fblogin extends Activity {
 
                     }
                 });
-        Intent intent = new Intent(currContext, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(currContext, MainActivity.class);
+//        startActivity(intent);
     }
 
     @Override

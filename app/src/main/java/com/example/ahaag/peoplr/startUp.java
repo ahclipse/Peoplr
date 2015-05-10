@@ -10,9 +10,9 @@ public class startUp extends Application {
 
 
 
-        int userId=11;
+       //int userId=14;
 
-   // private int userId = -1;
+   private int userId = -1;
 
 
 
