@@ -44,6 +44,7 @@ public class startUp extends Application {
     private static double latitude = 0;
     private static double longitude = 0;
     private static String url = "";
+    private static String contactInfo = "";
     private static Bitmap photo = null;
 
     private static boolean userCreation = false;
@@ -51,6 +52,7 @@ public class startUp extends Application {
     private static boolean latitudeDirtyBit = false;
     private static boolean longitudeDirtyBit = false;
     private static boolean urlDirtyBit = false;
+    private static boolean contactInfoDirtyBit = false;
 
     public static String getFb_access_token(){
         return fb_access_token;
@@ -102,6 +104,13 @@ public class startUp extends Application {
         url = newUrl;
     }
 
+    public static String getContactInfo(){
+        return contactInfo;
+    }
+    public static void setContactInfo(String newContactInfo){
+        contactInfo = newContactInfo;
+    }
+
     public static Bitmap getPhoto(){
         return photo;
     }
@@ -128,7 +137,7 @@ public class startUp extends Application {
     }
 
     public static void updateUser(Context context){
-        if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit){
+        if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit || contactInfoDirtyBit){
             // call the thiiiing
             new UserSetTask(context).execute();
              if(urlDirtyBit){
@@ -139,7 +148,7 @@ public class startUp extends Application {
 
     public static void loadProfilePhoto(ImageView imageView){
         if(photo == null) new ProfilePhotoDownloadTask().execute();
-        else imageView.setImageBitmap(Bitmap.createScaledBitmap(photo, 150, 150, false));
+        else imageView.setImageBitmap(photo);//Bitmap.createScaledBitmap(photo, 150, 150, false));
     }
 
     public static void checkBlurb(String testBlurb){
@@ -164,6 +173,13 @@ public class startUp extends Application {
         if(!url.equals(testUrl)){
             url = testUrl;
             urlDirtyBit = true;
+        }
+    }
+
+    public static void checkContactInfo(String testContactInfo){
+        if(!contactInfo.equals(testContactInfo)){
+            contactInfo = testContactInfo;
+            contactInfoDirtyBit = true;
         }
     }
 
@@ -268,9 +284,11 @@ public class startUp extends Application {
                     if(urlDirtyBit){
                         params.add(new BasicNameValuePair("photo_url", url));
                         urlDirtyBit = false;
-
-                        //todo start new img load task for profile?
                     }
+//      TODO          if(contactInfoDirtyBit){
+//                        params.add(new BasicNameValuePair("contact_info", contactInfo));
+//                        contactInfoDirtyBit = false;
+//                    }
                     if(params.size() > 0){
                         params.add(new BasicNameValuePair("user_id", Integer.toString(id)));
                         destUrl = "http://peoplr-eisendrachen00-4.c9.io/update_user";
