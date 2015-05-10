@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -122,7 +121,7 @@ public class startUp extends Application {
     public static void setContext(Context newContext) { context = newContext; }
 
     public static void createUser(String new_fb_access_token, String new_name, double new_latitude,
-                           double new_longitude, String new_url, Context new_context){
+                                  double new_longitude, String new_url, Context new_context){
 
         // goal = update backend and set user_id
         userCreation = true;
@@ -140,9 +139,9 @@ public class startUp extends Application {
         if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit || contactInfoDirtyBit){
             // call the thiiiing
             new UserSetTask(context).execute();
-             if(urlDirtyBit){
-                 new ProfilePhotoDownloadTask().execute(); // todo um
-             }
+            if(urlDirtyBit){
+                new ProfilePhotoDownloadTask().execute(); // todo um
+            }
         }
     }
 
@@ -184,17 +183,11 @@ public class startUp extends Application {
     }
 
     protected static void onUserCreate(String result){
-
-        Log.w("Result:  ", result);
-
         Gson gson = new Gson();
         String jsonOutput = result.trim();
         Type userType = new TypeToken<User>(){}.getType();
         User user = (User) gson.fromJson(jsonOutput, userType);
         setUserId(user.getId());
-
-        Log.w("Confirm User ID Set", "YES! User ID = " + getUserId());
-
         context.startActivity(new Intent(context, MainActivity.class));
     }
 
@@ -208,20 +201,8 @@ public class startUp extends Application {
 
         @Override
         protected Void doInBackground(Void... params) {
-            URL Aurl = null;
             try {
-//                URL urlConnection = new URL(url);
-//                HttpURLConnection connection = (HttpURLConnection) urlConnection
-//                        .openConnection();
-//                connection.setDoInput(true);
-//                connection.connect();
-//                InputStream input = connection.getInputStream();
-//                photo = BitmapFactory.decodeStream(input);
-
-                Log.w("URL TEXT: ", url);
-                Aurl = new URL(url);
-                if(Aurl == null) Log.w("GODDAMMIT ", "IT'S FUCKING NULL");
-                HttpURLConnection connection = (HttpURLConnection) Aurl.openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setDoInput(true);
                 connection.setInstanceFollowRedirects(true);
                 connection.connect();
@@ -229,7 +210,6 @@ public class startUp extends Application {
                 photo = BitmapFactory.decodeStream(inputStream);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Log.w("THE URL: ", Aurl.toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -245,7 +225,6 @@ public class startUp extends Application {
 
         public UserSetTask(Context context){
             this.context = context;
-            Log.w("UserCreateTask", "In Constructor");
         }
 
         @Override
@@ -328,7 +307,7 @@ public class startUp extends Application {
         }
 
         private InputStream postRequest(String urlString) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
+
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(50000 /* milliseconds */);
@@ -347,10 +326,7 @@ public class startUp extends Application {
             // Start the query
             conn.connect();
             InputStream stream = conn.getInputStream();
-
             return stream;
-
-            // END_INCLUDE(get_inputstream)
         }
 
         private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
@@ -360,11 +336,8 @@ public class startUp extends Application {
 
             for (NameValuePair pair : params)
             {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
+                if (first) first = false;
+                else result.append("&");
                 result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
                 result.append("=");
                 result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
@@ -372,8 +345,6 @@ public class startUp extends Application {
 
             return result.toString();
         }
-
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
 
         /** Reads an InputStream and converts it to a String.
          * @param stream InputStream containing HTML from targeted site.
@@ -390,5 +361,4 @@ public class startUp extends Application {
             return new String(buffer);
         }
     }
-
 }
