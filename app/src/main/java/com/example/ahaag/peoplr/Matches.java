@@ -1,8 +1,11 @@
 package com.example.ahaag.peoplr;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -13,22 +16,43 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.Toast;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.http.NameValuePair;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class Matches extends Activity implements AdapterView.OnItemClickListener{
-    final String drawerTitle= "Navigation";
+public class Matches extends Activity implements AdapterView.OnItemClickListener {
+    final String drawerTitle = "Navigation";
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
     ListView listview;
-
+    ArrayList<NameValuePair> params;
     ArrayList<String> list;
     startUp s;
+    Matches activity;
+    user currUser;
 
     int id;
     int[] u;
@@ -41,48 +65,53 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        s=((startUp)getApplicationContext());
+        s = ((startUp) getApplicationContext());
+        currUser.id=s.getUserId();
+        activity = this;
+        params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("user", Integer.toString(s.getUserId())));
+       new MatchesDownloadTask(3, activity, params).execute();
 
-         list=new ArrayList<>();
+
+        //list=new ArrayList<>();
 
 
-        id=s.getUserId();
-        //GET MATCHeS FOR ID
-        String st="[9,10,11,12,13,14,15,16]";
-        Gson gson = new Gson();
-        u = gson.fromJson(st, int[].class);
-        for (int i=0;i<u.length;i++){
-            //get user with id u[i]
-            String st2="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
-            Gson gson2 = new Gson();
-            u2 = gson2.fromJson(st2, user.class);
-            list.add(u2.name);
-        }
-
-        listview = (ListView) findViewById(R.id.fragmentContainer);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listview.setAdapter(adapter);
+//        id=s.getUserId();
+//        //GET MATCHeS FOR ID
+//        String st="[9,10,11,12,13,14,15,16]";
 //
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+//        Gson gson = new Gson();
+//        u = gson.fromJson(st, int[].class);
+//        for (int i=0;i<u.length;i++){
+//            //get user with id u[i]
+//            String st2="{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
+//            Gson gson2 = new Gson();
+//            u2 = gson2.fromJson(st2, user.class);
+//            list.add(u2.name);
+//        }
 //
-                int userID=u[position];
-                Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
-                nextScreen.putExtra("user", userID);
-
-                startActivity(nextScreen);
-           }
-       });
-
-
+//        listview = (ListView) findViewById(R.id.fragmentContainer);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
+//        listview.setAdapter(adapter);
+////
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+////
+//                int userID=u[position];
+//                Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
+//                nextScreen.putExtra("user", userID);
+//
+//                startActivity(nextScreen);
+//           }
+//       });
 
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.drawer_open,R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
@@ -100,7 +129,7 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         drawerLayout.setDrawerListener(drawerToggle);
 
         //Setting up the values of the Sidebar menu (Home, My Profile, Matches, Settings)
-        fragmentNames=getResources().getStringArray(R.array.fragment_names);
+        fragmentNames = getResources().getStringArray(R.array.fragment_names);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
         //Sets the adapter of the list view for the side Drawer
@@ -144,22 +173,268 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     public void onItemClick(AdapterView parent, View view, int position, long id) {
         getActionBar().setTitle(fragmentNames[position]);
         drawerLayout.closeDrawer(drawerList);
-        if (position==0){
+        if (position == 0) {
             Intent nextScreen = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(nextScreen);
         }
-        if (position==1){
+        if (position == 1) {
             Intent nextScreen = new Intent(getApplicationContext(), MyProfile.class);
             startActivity(nextScreen);
         }
-        if (position==2){
+        if (position == 2) {
             Intent nextScreen = new Intent(getApplicationContext(), Matches.class);
             startActivity(nextScreen);
         }
-        if (position==3){
-            Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
+        if (position == 3) {
+            Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
             startActivity(nextScreen);
         }
     }
 
+    public class Matchee {
+
+        @SerializedName("updated_at")
+        private String updated_at;
+
+        @SerializedName("created_at")
+        private String created_at;
+
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("matchee_id")
+        private String matchee_id;
+
+        @SerializedName("matcher_id")
+        private String matcher_id;
+
+        @SerializedName("tag_id")
+        private String tag_id;
+
+        @SerializedName("status")
+        private String status;
+
+        public final Integer getMatcheeID() {
+            return Integer.parseInt(this.matchee_id);
+        }
+
+        public final Integer getMatcherID() {
+            return Integer.parseInt(this.matcher_id);
+        }
+
+    }
+
+    protected ArrayList<Integer> onMatchResponse(String response) {
+
+        Gson gson = new Gson();
+
+        String jsonOutput = response.trim();
+        Type listType = new TypeToken<List<Matchee>>() {
+        }.getType();
+        final List<Matchee> matches = (List<Matchee>) gson.fromJson(jsonOutput, listType);
+
+        final ArrayList<Integer> list = new ArrayList<Integer>();
+        for (Matchee t : matches) {
+            if (t.getMatcheeID()==currUser.id){
+                list.add(t.getMatcherID());
+            }
+            else{
+                list.add(t.getMatcheeID());
+            }
+
+        }
+        //new UserDownloadTask(3, activity).execute();
+
+
+        ArrayAdapter adapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, list);
+        listview.setAdapter(adapter);
+//
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//
+//                String tagName = list.get(position);
+//                Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
+//                nextScreen.putExtra("tag", tagName);
+//                nextScreen.putExtra("id", matches.get(position).getId());
+//                startActivity(nextScreen);
+//            }
+//        });
+        return list;
+    }
+
+    class MatchesDownloadTask extends AsyncTask<Void, Void, String> {
+
+        int type;
+        List<NameValuePair> params;
+
+        ProgressDialog dialog;
+        Context context;
+        Matches activity;
+
+        // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
+        // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
+
+        public MatchesDownloadTask(int type, Matches activity, List<NameValuePair> params) {
+
+            this.type = type;
+            this.params=params;
+            this.activity = activity;
+            this.context = activity;
+            dialog = new ProgressDialog(context);
+            dialog.setTitle("title");
+            dialog.setMessage("message");
+        }
+
+        protected void onPreExecute() {
+            this.dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(Void... args) {
+            try {
+                return loadFromNetwork("https://peoplr-eisendrachen00-4.c9.io/get_matches", false, params);
+            } catch (IOException e) {
+                return ("Connection error!");
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+            onMatchResponse(result);
+            dialog.dismiss();
+        }
+
+        /**
+         * Initiates the fetch operation.
+         */
+        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
+            InputStream stream = null;
+            String str = "";
+            try {
+                stream = getRequest(url, params);
+                str = readIt(stream, 5000); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            return str;
+        }
+
+        // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        private InputStream getRequest(String urlString, List<NameValuePair> params) throws IOException {
+            // BEGIN_INCLUDE(get_inputstream)
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(20000 /* milliseconds */);
+            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setRequestMethod("POST");///I CHANGEd from GET
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(params));
+            writer.flush();
+            writer.close();
+            // Start the query
+            //getQuery(params);
+            conn.connect();
+            InputStream stream = conn.getInputStream();
+            return stream;
+            // END_INCLUDE(get_inputstream)
+        }
+
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : params) {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
+        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        /**
+         * Reads an InputStream and converts it to a String.
+         *
+         * @param stream InputStream containing HTML from targeted site.
+         * @param len    Length of string that this method returns.
+         * @return String concatenated according to len parameter.
+         * @throws java.io.IOException
+         * @throws java.io.UnsupportedEncodingException
+         */
+        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+            Reader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            reader.read(buffer);
+            return new String(buffer);
+        }
+
+//        class UserDownloadTask extends AsyncTask<Void, Void, String> {
+//
+//            int type;
+//            List<NameValuePair> params;
+//
+//            ProgressDialog dialog;
+//            Context context;
+//            MainActivity activity;
+
+            // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
+            // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
+
+//            public UserDownloadTask(int type, MainActivity activity) {
+//
+//                this.type = type;
+//
+//                this.activity = activity;
+//                this.context = activity;
+//                dialog = new ProgressDialog(context);
+//                dialog.setTitle("title");
+//                dialog.setMessage("message");
+//            }
+//
+//            protected void onPreExecute() {
+//                this.dialog.show();
+//            }
+//
+//            @Override
+//            protected String doInBackground(Void... args) {
+//                try {
+//                    return loadFromNetwork("https://peoplr-eisendrachen00-4.c9.io/get_profile", false, params);
+//                } catch (IOException e) {
+//                    return ("Connection error!");
+//                }
+//            }
+
+            //       @Override
+//        protected void onPostExecute(String result) {
+//
+//            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+//            onTagResponse(result);
+//            dialog.dismiss();
+//        }
+
+            /** Initiates the fetch operation. */
+
+
+//        }
+   }
 }

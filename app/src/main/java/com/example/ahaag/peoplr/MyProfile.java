@@ -154,10 +154,11 @@ public void onItemClick(AdapterView parent, View view, int position, long id) {
         startActivity(nextScreen);
         }
         if (position==3){
-        Intent nextScreen = new Intent(getApplicationContext(), MapsActivity.class);
+        Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
         startActivity(nextScreen);
         }
         }
+
 
   }
 class user{

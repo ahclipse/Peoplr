@@ -13,7 +13,8 @@
         <item>Home</item>
         <item>My Profile</item>
         <item>Matches</item>
-        <item>Map</item>
+        <item>Signout</item>
+
 
     </string-array>
 
@@ -27,5 +28,6 @@
     <string name="title_activity_facebook">FacebookActivity</string>
     <string name="title_activity_matches_profile">MatchesProfile</string>
     <string name="title_activity_edit_info">EditInfo</string>
+    <string name="blurb">This is where you can describe yourself!</string>
 
 </resources>

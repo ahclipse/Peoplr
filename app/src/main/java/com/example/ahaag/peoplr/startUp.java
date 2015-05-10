@@ -9,7 +9,7 @@ public class startUp extends Application {
 
 
 
-        int userId=10;
+        int userId=9;
 
 
     public int getUserId(){ return userId;}

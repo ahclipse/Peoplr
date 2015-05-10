@@ -3,7 +3,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff1385ff">
+    >
 
 
     <RelativeLayout
@@ -24,7 +24,7 @@
         android:text="name"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="#fffffbfb"/>
+        />
 
     <ImageView
 
@@ -43,10 +43,8 @@
     android:layout_height="wrap_content"
     android:id="@+id/description"
     android:layout_below="@+id/imageView1"
-    android:text="This is where you describe youself.
-    What you like to do, your personality, etc, etc"
+    android:text="@string/blurb"
     android:layout_margin="20dp"
-        android:background="#ffff"
         />
         <TextView
             android:layout_width="wrap_content"
@@ -55,7 +53,7 @@
             android:layout_below="@+id/description"
             android:text="contact info"
             android:layout_margin="20dp"
-            android:background="#ffff"
+
             />
         <Button
             android:layout_height="wrap_content"
@@ -65,7 +63,7 @@
             android:id="@+id/Button"
             android:layout_below="@+id/contactInfo"
             android:onClick="selfDestruct"
-            android:background="#ffa9cdff"/>
+            />
     </RelativeLayout>
     <!-- The navigation drawer -->
     <ListView android:id="@+id/left_drawer"
