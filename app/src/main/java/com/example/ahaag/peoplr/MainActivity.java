@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
-import android.util.MalformedJsonException;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
@@ -166,40 +164,40 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     }
 
-    public class Tag {
+//    public class Tag {
+//
+//        @SerializedName("updated_at")
+//        private String updated_at;
+//
+//        @SerializedName("created_at")
+//        private String created_at;
+//
+//        @SerializedName("id")
+//        private String id;
+//
+//        @SerializedName("name")
+//        private String name;
+//
+//        public final Integer getId() {
+//            return Integer.parseInt(this.id);
+//        }
+//
+//        public final String getName() {
+//            return this.name;
+//        }
+//
+//    }
 
-        @SerializedName("updated_at")
-        private String updated_at;
-
-        @SerializedName("created_at")
-        private String created_at;
-
-        @SerializedName("id")
-        private String id;
-
-        @SerializedName("name")
-        private String name;
-
-        public final Integer getId() {
-            return Integer.parseInt(this.id);
-        }
-
-        public final String getName() {
-            return this.name;
-        }
-
-    }
-
-    protected void onTagResponse(String response) throws MalformedJsonException, JsonSyntaxException {
+    protected void onTagResponse(String response) {
 
         Gson gson = new Gson();
 
         String jsonOutput = response.trim();
-        Type listType = new TypeToken<List<Tag>>(){}.getType();
-        final List<Tag> tags = (List<Tag>) gson.fromJson(jsonOutput, listType);
+        Type listType = new TypeToken<List<TagMin>>(){}.getType();
+        final List<TagMin> tags = (List<TagMin>) gson.fromJson(jsonOutput, listType);
 
         final ArrayList<String> list = new ArrayList<String>();
-        for (Tag t : tags) {
+        for (TagMin t : tags) {
             list.add(t.getName());
         }
 
@@ -251,8 +249,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         @Override
         protected String doInBackground(Void... args) {
             try {
-                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags", false, params);
+                //return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags");
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_tags_min");
             } catch (IOException e) {
+                e.printStackTrace();
+
                 return ("Connection error!");
             }
         }
@@ -264,18 +265,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
             try {
                 onTagResponse(result);
-            } catch (MalformedJsonException e) {
-                Log.w("JSON Response:  ", result);
-                new TagDownloadTask(activity).execute();
             } catch (JsonSyntaxException e) {
                 Log.w("JSON Response:  ", result);
-                new TagDownloadTask(activity).execute();
+                //new TagDownloadTask(activity).execute();
             }
             dialog.dismiss();
         }
 
         /** Initiates the fetch operation. */
-        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
+        private String loadFromNetwork(String url) throws IOException {
             InputStream stream = null;
             String str ="";
             try{
