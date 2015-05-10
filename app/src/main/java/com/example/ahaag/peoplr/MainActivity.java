@@ -88,6 +88,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 //        request.executeAsync();
 
 
+        // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
+        try {
+            Thread.sleep(30);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -240,6 +246,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         Context context;
         MainActivity activity;
 
+        int streamLength = 0;
+
         // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
         // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
 
@@ -250,8 +258,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             this.activity = activity;
             this.context = activity;
             dialog = new ProgressDialog(context);
-            dialog.setTitle("title");
-            dialog.setMessage("message");
+            //dialog.setTitle("title");
+            //dialog.setMessage("message");
         }
 
         protected void onPreExecute() {
@@ -281,7 +289,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             String str ="";
             try{
                 stream = getRequest(url);
-                str = readIt(stream, 5000); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -303,6 +311,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             // Start the query
             conn.connect();
             InputStream stream = conn.getInputStream();
+            streamLength = conn.getContentLength();
             return stream;
             // END_INCLUDE(get_inputstream)
         }
