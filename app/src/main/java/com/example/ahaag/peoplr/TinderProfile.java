@@ -54,7 +54,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     String[] fragmentNames;
     ListView drawerList;
     CardContainer mCardContainer;
-    startUp s;
     int tagID;
     int[] u;
     user u2;
@@ -62,6 +61,13 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     public static List<User> users;
 
     List<NameValuePair> params;
+    List<List<NameValuePair>> swipes; //TODO ENSURE THAT SWIPES DO NOT OVERWRITE EACH OTHER
+    int latestSwipe = 0;
+    int lastSent = 0;
+
+    startUp s;
+
+    TinderProfile activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,72 +88,16 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         s = ((startUp) getApplicationContext());
         //THis is the tag id!!1
         tagID = i.getIntExtra("id", 0);
-
+        activity = this;
 
         // TODO GET USERS FOR SWIPING REQUEST - RETURN ARRAY OF IDS? WHY THO
 
-        startUp s = ((startUp)getApplicationContext());
+        swipes = new ArrayList<List<NameValuePair>>();
         params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
         params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
 
         new UserListDownloadTask(this).execute();
-
-//        String st = "[9,10,11,12,13,14,15,16]";//Get users on tag with id above
-//        Gson gson = new Gson();
-//        u = gson.fromJson(st, int[].class);
-//
-//        //delete when image url works
-//        Resources r=getResources();
-//
-//        mCardContainer = (CardContainer) findViewById(R.id.layoutview);
-//        mCardContainer.setOrientation(Orientations.Orientation.Disordered);
-//        SimpleCardStackAdapter adapter = new SimpleCardStackAdapter(this);
-//        for (int j = 0; j < u.length; j++) {
-//            //get user with id u.ids[j]
-//
-//            //TODO GET USER PROFILE FOR ID REQUEST
-//
-//            String st2 = "{\"id\":10,\"name\":\"Dipper Pines\",\"blurb\":null,\"fb_access_token\":\"222\",\"created_at\":\"2015-05-04T19:14:06.421Z\",\"updated_at\":\"2015-05-05T21:59:45.375Z\",\"latitude\":40.0,\"longitude\":30.1,\"photo_url\":\"http://vignette2.wikia.nocookie.net/gravityfalls/images/c/cb/S1e16_dipper_will_take_room.png/revision/latest/scale-to-width/250?cb=20130406215813\"}";
-//            Gson gson2 = new Gson();
-//            u2 = gson2.fromJson(st2, user.class);
-//            ImageView i2=(ImageView)findViewById(R.id.imageView1);
-//            Bitmap bmap=null;
-//            try {
-//                bmap = new ImageLoadTask(u2.photo_url, i2, false).execute().get();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//            CardModel card = new CardModel(u2.name, u2.blurb,bmap);//Must add actual picture
-////
-//            card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
-//                @Override
-//                public void onLike() {
-//                    //Log.i("Swipeable Cards","I like the card");
-//                    Toast.makeText(getApplicationContext(),
-//                            "Liked", Toast.LENGTH_LONG)
-//                            .show();
-//
-//                    //udate swiping liked with id u[j] and s.getUserId()
-//                }
-//
-//                @Override
-//                public void onDislike() {
-//                    // Log.i("Swipeable Cards","I dislike the card");
-//                    Toast.makeText(getApplicationContext(),
-//                            "Disliked", Toast.LENGTH_LONG)
-//                            .show();
-//                    //udate swiping disliked with id u[j] and s.getUserId()
-//                }
-//            });
-//            adapter.add(card);
-//        }
-//
-//
-//        mCardContainer.setAdapter(adapter);
-
 
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -222,7 +172,8 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         for (int i = 0; i < users.size(); i++) {
 
-            CardModel card = new CardModel(users.get(i).getName(), users.get(i).getBlurb(), images.get(i));//Must add actual picture
+            final CardModel card = new CardModel(users.get(i).getName(), users.get(i).getBlurb(), images.get(i));//Must add actual picture
+            card.setId(users.get(i).getId());
 
             card.setOnCardDimissedListener(new CardModel.OnCardDimissedListener() {
                 @Override
@@ -232,6 +183,18 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                             .show();
 
                     //TODO SEND SWIPE RESULT = ACCEPTED
+
+                    List<NameValuePair> swipe = new ArrayList<NameValuePair>();
+                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
+                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("matchee_id", Integer.toString(card.getId())));
+                    swipe.add(new BasicNameValuePair("accepted", "true"));
+
+                    swipes.add(swipe);
+                    latestSwipe++;
+
+                    new SwipeUpdateTask(activity).execute();
                 }
 
                 @Override
@@ -242,12 +205,26 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
                             .show();
 
                     //TODO SEND SWIPE RESULT = REJECTED
+
+                    List<NameValuePair> swipe = new ArrayList<NameValuePair>();
+                    swipe.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
+                    swipe.add(new BasicNameValuePair("matcher_id", Integer.toString(s.getUserId())));
+                    swipe.add(new BasicNameValuePair("matchee_id", Integer.toString(card.getId())));
+                    swipe.add(new BasicNameValuePair("accepted", "false"));
+
+                    swipes.add(swipe);
+                    latestSwipe++;
+
+                    new SwipeUpdateTask(activity).execute();
                 }
             });
             adapter.add(card);
         }
 
         mCardContainer.setAdapter(adapter);
+
+        //TODO ADD SUPPORT TO END OF LIST....
     }
 
     @Override
@@ -527,18 +504,120 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
+    //  int latestUserSwipe = 0;
+    //  int lastSentSwipe = 0;
+
+    class SwipeUpdateTask extends AsyncTask<Void, Void, String>{
+
+        Context context;
+        TinderProfile activity;
+        int swipeNum;
+
+        int streamLength = 0;
+
+        public SwipeUpdateTask(TinderProfile activity){
+            this.activity = activity;
+            this.context = activity;
+            swipeNum = lastSent;
+            lastSent++;
+            if(lastSent > latestSwipe){
+                //do something...
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... args) {
+            try {
+                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/match", swipes.get(swipeNum));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
+
+        /** Initiates the fetch operation. */
+        private String loadFromNetwork(String url, List<NameValuePair> swipe) throws IOException {
+            InputStream stream = null;
+            String str ="";
+            try{
+                stream = postRequest(url, swipe);
+                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
+            }
+            return str;
+        }
+
+        private InputStream postRequest(String urlString, List<NameValuePair> swipe) throws IOException {
+            // BEGIN_INCLUDE(get_inputstream)
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(20000 /* milliseconds */);
+            conn.setConnectTimeout(20000 /* milliseconds */);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(swipe));
+            writer.flush();
+            writer.close();
+
+            // Start the query
+            conn.connect();
+            InputStream stream = conn.getInputStream();
+            streamLength = conn.getContentLength();
+
+            return stream;
+
+            // END_INCLUDE(get_inputstream)
+        }
+
+        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+        {
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
+
+            for (NameValuePair pair : params)
+            {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
+
+                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+            }
+
+            return result.toString();
+        }
+
+        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+        /** Reads an InputStream and converts it to a String.
+         * @param stream InputStream containing HTML from targeted site.
+         * @param len Length of string that this method returns.
+         * @return String concatenated according to len parameter.
+         * @throws java.io.IOException
+         * @throws java.io.UnsupportedEncodingException
+         */
+        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+            Reader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            reader.read(buffer);
+            return new String(buffer);
+        }
+    }
+
 }
-//class userID{
-//    int[] ids;
-//}
-//class user{
-//    int id;
-//    String name;
-//    String blurb;
-//    String fb_access_token;
-//    String created_at;
-//    String updated_at;
-//    double longitude;
-//    double latitude;
-//    String photo_url;
-//}

@@ -17,7 +17,6 @@
 
 package com.andtinder.model;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -26,6 +25,7 @@ public class CardModel {
 
 	private String   title;
 	private String   description;
+    private int id;
 	private Drawable cardImageDrawable;
 	private Drawable cardLikeImageDrawable;
 	private Drawable cardDislikeImageDrawable;
@@ -66,6 +66,9 @@ public class CardModel {
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+    public void setId(int id) { this.id = id; }
+    public int getId() { return id; }
 
 	public String getDescription() {
 		return description;
