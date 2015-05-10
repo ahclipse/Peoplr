@@ -78,9 +78,10 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
 
         // TODO GET USERS FOR SWIPING REQUEST - RETURN ARRAY OF IDS? WHY THO
 
+        startUp s = ((startUp)getApplicationContext());
         params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("tag_id", Integer.toString(16)));
-        params.add(new BasicNameValuePair("user_id", Integer.toString(10))); //TODO MAKE THIS THE REAL USER
+        params.add(new BasicNameValuePair("tag_id", Integer.toString(tagID)));
+        params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId()))); //TODO MAKE THIS THE REAL USER
 
         new UserListDownloadTask(this).execute();
 
