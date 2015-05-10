@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -45,14 +44,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     ActionBarDrawerToggle drawerToggle;
     String[] fragmentNames;
     ListView drawerList;
-    TextView textview;
     ListView listview;
-    UserProfile cr;
-    ArrayList tag1;
-    ArrayList tag2;
-    ArrayList tag3;
-
-    MainActivity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,22 +54,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         getActionBar().setHomeButtonEnabled(true);
 
         listview = (ListView) findViewById(R.id.fragmentContainer);
-
-
         MainActivity activity = this;
-
-        activity = this;
         new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
 
-
-
-
-        // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         // Set the drawer toggle as the DrawerListener
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -108,7 +87,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         //Listener for the drawer objects
         drawerList.setOnItemClickListener(this);
-
     }
 
     @Override
@@ -132,7 +110,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             return true;
         }
         // Handle your other action bar items...
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -150,9 +127,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
         if (position==1){
             Intent nextScreen = new Intent(this, MyProfile.class);
-//            Bundle b = new Bundle();
-//            b.putParcelable("currUser", cr);
-//            nextScreen.putExtras(b);
             startActivity(nextScreen);
         }
         if (position==2){
@@ -163,7 +137,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             Intent nextScreen = new Intent(getApplicationContext(), fblogin.class);
             startActivity(nextScreen);
         }
-
     }
 
     protected void onTagResponse(String response) {
@@ -195,29 +168,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 startActivity(nextScreen);
             }
         });
-
     }
 
     class TagDownloadTask extends AsyncTask<Void, Void, String> {
 
-        List<NameValuePair> params;
-
         ProgressDialog dialog;
         Context context;
         MainActivity activity;
-
         int streamLength = 0;
 
-        // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
-        // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
-
         public TagDownloadTask(MainActivity activity){
-
             this.activity = activity;
             this.context = activity;
             dialog = new ProgressDialog(context);
-            //dialog.setTitle("title");
-            //dialog.setMessage("message");
         }
 
         protected void onPreExecute() {
@@ -227,11 +190,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         @Override
         protected String doInBackground(Void... args) {
             try {
-                //return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/all_tags");
                 return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/get_tags_min");
             } catch (IOException e) {
                 e.printStackTrace();
-
                 return ("Connection error!");
             }
         }
@@ -245,12 +206,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 onTagResponse(result);
             } catch (JsonSyntaxException e) {
                 Log.w("JSON Response:  ", result);
-                //new TagDownloadTask(activity).execute();
             }
             dialog.dismiss();
         }
 
-        /** Initiates the fetch operation. */
         private String loadFromNetwork(String url) throws IOException {
             InputStream stream = null;
             String str ="";
@@ -265,10 +224,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             return str;
         }
 
-        // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
-
         private InputStream getRequest(String urlString) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
+
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(50000 /* milliseconds */);
@@ -280,7 +237,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             InputStream stream = conn.getInputStream();
             streamLength = conn.getContentLength();
             return stream;
-            // END_INCLUDE(get_inputstream)
         }
 
         private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
@@ -290,20 +246,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
             for (NameValuePair pair : params)
             {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
+                if (first) first = false;
+                else result.append("&");
                 result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
                 result.append("=");
                 result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
             }
-
             return result.toString();
         }
-
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
 
         /** Reads an InputStream and converts it to a String.
          * @param stream InputStream containing HTML from targeted site.

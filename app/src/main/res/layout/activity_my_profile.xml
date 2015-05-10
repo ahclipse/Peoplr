@@ -46,15 +46,15 @@
     android:text="@string/blurb"
     android:layout_margin="20dp"
         />
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/contactInfo"-->
-            <!--android:layout_below="@+id/description"-->
-            <!--android:text="contact info"-->
-            <!--android:layout_margin="20dp"-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/contactInfo"
+            android:layout_below="@+id/contactInfo"
+            android:text="contact info"
+            android:layout_margin="20dp"
 
-            <!--/>-->
+            />
         <Button
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -75,5 +75,6 @@
         android:dividerHeight="0dp"
         android:background="#111"/>
 
+    
 
 </android.support.v4.widget.DrawerLayout>

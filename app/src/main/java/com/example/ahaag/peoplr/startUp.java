@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.google.gson.Gson;
@@ -26,6 +25,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -44,6 +44,7 @@ public class startUp extends Application {
     private static double latitude = 0;
     private static double longitude = 0;
     private static String url = "";
+    private static String contactInfo = "";
     private static Bitmap photo = null;
 
     private static boolean userCreation = false;
@@ -51,6 +52,7 @@ public class startUp extends Application {
     private static boolean latitudeDirtyBit = false;
     private static boolean longitudeDirtyBit = false;
     private static boolean urlDirtyBit = false;
+    private static boolean contactInfoDirtyBit = false;
 
     public static String getFb_access_token(){
         return fb_access_token;
@@ -102,6 +104,13 @@ public class startUp extends Application {
         url = newUrl;
     }
 
+    public static String getContactInfo(){
+        return contactInfo;
+    }
+    public static void setContactInfo(String newContactInfo){
+        contactInfo = newContactInfo;
+    }
+
     public static Bitmap getPhoto(){
         return photo;
     }
@@ -113,7 +122,7 @@ public class startUp extends Application {
     public static void setContext(Context newContext) { context = newContext; }
 
     public static void createUser(String new_fb_access_token, String new_name, double new_latitude,
-                           double new_longitude, String new_url, Context new_context){
+                                  double new_longitude, String new_url, Context new_context){
 
         // goal = update backend and set user_id
         userCreation = true;
@@ -121,24 +130,25 @@ public class startUp extends Application {
         name = new_name;
         latitude = new_latitude;
         longitude = new_longitude;
-        url = new_url;
+        url = new_url; //new_url;
         context = new_context;
         new UserSetTask(context).execute();
         new ProfilePhotoDownloadTask().execute();
     }
 
     public static void updateUser(Context context){
-        if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit){
+        if(blurbDirtyBit || latitudeDirtyBit || longitudeDirtyBit || urlDirtyBit || contactInfoDirtyBit){
             // call the thiiiing
             new UserSetTask(context).execute();
-             if(urlDirtyBit){
-                 new ProfilePhotoDownloadTask().execute(); // todo um
-             }
+            if(urlDirtyBit){
+                new ProfilePhotoDownloadTask().execute(); // todo um
+            }
         }
     }
 
     public static void loadProfilePhoto(ImageView imageView){
-        imageView.setImageBitmap(photo);
+        if(photo == null) new ProfilePhotoDownloadTask().execute();
+        else imageView.setImageBitmap(photo);//Bitmap.createScaledBitmap(photo, 150, 150, false));
     }
 
     public static void checkBlurb(String testBlurb){
@@ -171,19 +181,26 @@ public class startUp extends Application {
         }
     }
 
+//<<<<<<< HEAD
+//
+//    protected static void onUserCreate(String result){
+//
+//        Log.w("Result:  ", result);
+//=======
+    public static void checkContactInfo(String testContactInfo){
+        if(!contactInfo.equals(testContactInfo)){
+            contactInfo = testContactInfo;
+            contactInfoDirtyBit = true;
+        }
+    }
+//>>>>>>> f0a9e8f9716326728784857611af2e846d96c70c
 
     protected static void onUserCreate(String result){
-
-        Log.w("Result:  ", result);
-
         Gson gson = new Gson();
         String jsonOutput = result.trim();
         Type userType = new TypeToken<User>(){}.getType();
         User user = (User) gson.fromJson(jsonOutput, userType);
         setUserId(user.getId());
-
-        Log.w("Confirm User ID Set", "YES! User ID = " + getUserId());
-
         context.startActivity(new Intent(context, MainActivity.class));
     }
 
@@ -198,13 +215,14 @@ public class startUp extends Application {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                URL urlConnection = new URL(url);
-                HttpURLConnection connection = (HttpURLConnection) urlConnection
-                        .openConnection();
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setDoInput(true);
+                connection.setInstanceFollowRedirects(true);
                 connection.connect();
-                InputStream input = connection.getInputStream();
-                photo = BitmapFactory.decodeStream(input);
+                InputStream inputStream = connection.getInputStream();
+                photo = BitmapFactory.decodeStream(inputStream);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -220,7 +238,6 @@ public class startUp extends Application {
 
         public UserSetTask(Context context){
             this.context = context;
-            Log.w("UserCreateTask", "In Constructor");
         }
 
         @Override
@@ -259,9 +276,11 @@ public class startUp extends Application {
                     if(urlDirtyBit){
                         params.add(new BasicNameValuePair("photo_url", url));
                         urlDirtyBit = false;
-
-                        //todo start new img load task for profile?
                     }
+//      TODO          if(contactInfoDirtyBit){
+//                        params.add(new BasicNameValuePair("contact_info", contactInfo));
+//                        contactInfoDirtyBit = false;
+//                    }
                     if(params.size() > 0){
                         params.add(new BasicNameValuePair("user_id", Integer.toString(id)));
                         destUrl = "http://peoplr-eisendrachen00-4.c9.io/update_user";
@@ -301,7 +320,7 @@ public class startUp extends Application {
         }
 
         private InputStream postRequest(String urlString) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
+
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(50000 /* milliseconds */);
@@ -320,10 +339,7 @@ public class startUp extends Application {
             // Start the query
             conn.connect();
             InputStream stream = conn.getInputStream();
-
             return stream;
-
-            // END_INCLUDE(get_inputstream)
         }
 
         private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
@@ -333,11 +349,8 @@ public class startUp extends Application {
 
             for (NameValuePair pair : params)
             {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
+                if (first) first = false;
+                else result.append("&");
                 result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
                 result.append("=");
                 result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
@@ -345,8 +358,6 @@ public class startUp extends Application {
 
             return result.toString();
         }
-
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
 
         /** Reads an InputStream and converts it to a String.
          * @param stream InputStream containing HTML from targeted site.
@@ -363,5 +374,4 @@ public class startUp extends Application {
             return new String(buffer);
         }
     }
-
 }
