@@ -57,6 +57,7 @@ public class fblogin extends Activity {
     String last_name;
     String picture;
     String id;
+    Context currContext;
 
 
     @Override
@@ -75,7 +76,8 @@ public class fblogin extends Activity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_fblogin);
-        final Context currContext = this;
+        //final Context currContext = this;
+        currContext = this;
 
         activity = this;
         callbackManager = CallbackManager.Factory.create();
@@ -102,24 +104,26 @@ public class fblogin extends Activity {
                                         first_name = FBfirst_name;
                                         last_name = FBlast_name;
                                         picture = FBpicture;
+
+                                        params = new ArrayList<NameValuePair>();
+                                        params.add(new BasicNameValuePair("fb_access_token", id));
+                                        params.add(new BasicNameValuePair("name", first_name + " " + last_name)); //TODO MAKE THIS THE REAL USER
+                                        params.add(new BasicNameValuePair("photo_url", picture)); //ProfPic
+                                        params.add(new BasicNameValuePair("latitude", Double.toString(latitude)));
+                                        params.add(new BasicNameValuePair("longitude", Double.toString(longitude)));
+
+                                        new UserCreateTask(activity).execute();
+
+                                        //Thread.sleep(1000);
+
                                     }
                                 });
                         request.executeAsync();
-                                //I think this works... Idk atm
-
-                        params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("fb_access_token", id));
-                        params.add(new BasicNameValuePair("name", first_name + " " + last_name)); //TODO MAKE THIS THE REAL USER
-                        params.add(new BasicNameValuePair("photo_url", picture)); //ProfPic
-
-
-
+                        //I think this works... Idk atm
 
                         //Progress from the Login to the MainActivity
                         //Intent intent = new Intent(currContext, MainActivity.class);
                         //startActivity(intent);
-
-
                     }
 
                     @Override
@@ -148,6 +152,11 @@ public class fblogin extends Activity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    protected void onUserCreate(){
+        //Progress from the Login to the MainActivity
+        Intent intent = new Intent(currContext, MainActivity.class);
+        startActivity(intent);
+    }
 
     private final LocationListener locationListener = new LocationListener() {
        @Override
@@ -173,25 +182,32 @@ public class fblogin extends Activity {
     };
 
 
-
-
     class UserCreateTask extends AsyncTask<Void, Void, String> {
 
         Context context;
         fblogin activity;
-        int swipeNum;
+        //ProgressDialog dialog;
 
         int streamLength = 0;
 
         public UserCreateTask(fblogin activity){
             this.activity = activity;
             this.context = activity;
+            //dialog = new ProgressDialog(currContext);
+            Log.w("UserCreateTask", "In Constructor");
+        }
 
+        @Override
+        protected void onPreExecute() {
+            Log.w("UserCreateTask", "In onPreExecute");
+            Toast.makeText(currContext, "Starting CREATE_USER request!", Toast.LENGTH_SHORT).show();
+            //this.dialog.show();
         }
 
         @Override
         protected String doInBackground(Void... args) {
             try {
+                Log.w("UserCreateTask", "In doInBackground");
                 return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/create_user");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -201,7 +217,10 @@ public class fblogin extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            Log.w("UserCreateTask", "In onPostExecute");
+            Toast.makeText(currContext, "You have been logged in!", Toast.LENGTH_SHORT).show();
+            onUserCreate();
+            //dialog.dismiss();
         }
 
         /** Initiates the fetch operation. */
@@ -283,112 +302,4 @@ public class fblogin extends Activity {
             return new String(buffer);
         }
     }
-
-    class TagUpdateTask extends AsyncTask<Void, Void, String>{
-
-        Context context;
-        TinderProfile activity;
-        int streamLength = 0;
-
-        public TagUpdateTask(TinderProfile activity){
-            this.activity = activity;
-            this.context = activity;
-
-        }
-
-        @Override
-        protected String doInBackground(Void... args) {
-            try {
-                return loadFromNetwork("http://peoplr-eisendrachen00-4.c9.io/add_user_to_tag");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-        }
-
-        /** Initiates the fetch operation. */
-        private String loadFromNetwork(String url) throws IOException {
-            InputStream stream = null;
-            String str ="";
-            try{
-                stream = postRequest(url);
-                str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                }
-            }
-            return str;
-        }
-
-        private InputStream postRequest(String urlString) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getQuery(params));
-            writer.flush();
-            writer.close();
-
-            // Start the query
-            conn.connect();
-            InputStream stream = conn.getInputStream();
-            streamLength = conn.getContentLength();
-
-            return stream;
-
-            // END_INCLUDE(get_inputstream)
-        }
-
-        private String getQuery(List<NameValuePair> tagUpdate) throws UnsupportedEncodingException
-        {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            for (NameValuePair pair : tagUpdate)
-            {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
-            }
-
-            return result.toString();
-        }
-
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
-
-        /** Reads an InputStream and converts it to a String.
-         * @param stream InputStream containing HTML from targeted site.
-         * @param len Length of string that this method returns.
-         * @return String concatenated according to len parameter.
-         * @throws java.io.IOException
-         * @throws java.io.UnsupportedEncodingException
-         */
-        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
-        }
-    }
-
 }
