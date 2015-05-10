@@ -21,6 +21,9 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,6 +37,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -58,7 +62,7 @@ public class fblogin extends Activity {
     String picture;
     String id;
     Context currContext;
-
+    startUp s;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,8 @@ public class fblogin extends Activity {
         setContentView(R.layout.activity_fblogin);
         //final Context currContext = this;
         currContext = this;
+
+        s = ((startUp) getApplicationContext());
 
         activity = this;
         callbackManager = CallbackManager.Factory.create();
@@ -152,7 +158,73 @@ public class fblogin extends Activity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    protected void onUserCreate(){
+    private class User {
+
+        @SerializedName("updated_at")
+        private String updated_at;
+
+        @SerializedName("created_at")
+        private String created_at;
+
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("name")
+        private String name;
+
+        @SerializedName("blurb")
+        private String blurb;
+
+        @SerializedName("fb_access_token")
+        private String fb_access_token;
+
+        @SerializedName("latitude")
+        private String latitude;
+
+        @SerializedName("longitude")
+        private String longitude;
+
+        @SerializedName("photo_url")
+        private String photo_url;
+
+        public final Integer getId() {
+            return Integer.parseInt(this.id);
+        }
+        public final String getName() {
+            return this.name;
+        }
+        public final String getBlurb() {
+            return this.blurb;
+        }
+        public final String getFb_access_token() {
+            return this.fb_access_token;
+        }
+        public final String getLatitude() {
+            return this.latitude;
+        }
+        public final String getLongitude() {
+            return this.longitude;
+        }
+        public final String getPhoto_url() {
+            return this.photo_url;
+        }
+
+    }
+
+    protected void onUserCreate(String result){
+        //set user id
+
+        Gson gson = new Gson();
+        List<User> users = new ArrayList<User>();
+
+        String jsonOutput = result.trim();
+        Type listType = new TypeToken<List<User>>(){}.getType();
+        users = (List<User>) gson.fromJson(jsonOutput, listType);
+
+        s.setUserId(users.get(0).getId());
+
+        Log.w("Confirm User ID Set", "YES! User ID = " + s.getUserId());
+
         //Progress from the Login to the MainActivity
         Intent intent = new Intent(currContext, MainActivity.class);
         startActivity(intent);
@@ -218,8 +290,8 @@ public class fblogin extends Activity {
         @Override
         protected void onPostExecute(String result) {
             Log.w("UserCreateTask", "In onPostExecute");
-            Toast.makeText(currContext, "You have been logged in!", Toast.LENGTH_SHORT).show();
-            onUserCreate();
+            Toast.makeText(currContext, "You have been logged in!" + result, Toast.LENGTH_LONG).show();
+            onUserCreate(result);
             //dialog.dismiss();
         }
 

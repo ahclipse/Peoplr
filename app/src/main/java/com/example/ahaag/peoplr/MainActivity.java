@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
+import android.util.MalformedJsonException;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,15 +20,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,7 +73,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
         try {
-            Thread.sleep(30);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -191,7 +189,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     }
 
-    protected void onTagResponse(String response){
+    protected void onTagResponse(String response) throws MalformedJsonException {
 
         Gson gson = new Gson();
 
@@ -220,6 +218,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 startActivity(nextScreen);
             }
         });
+
     }
 
     class TagDownloadTask extends AsyncTask<Void, Void, String> {
@@ -261,7 +260,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         protected void onPostExecute(String result) {
 
             Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
-            onTagResponse(result);
+
+            try {
+                onTagResponse(result);
+            } catch (MalformedJsonException e) {
+                Log.w("JSON Response:  ", result);
+                new TagDownloadTask(activity).execute();
+            }
             dialog.dismiss();
         }
 
@@ -271,7 +276,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             String str ="";
             try{
                 stream = getRequest(url);
-                str = readIt(stream, 2 * streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                str = readIt(stream, streamLength + 66); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
             } finally {
                 if (stream != null) {
                     stream.close();

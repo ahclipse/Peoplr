@@ -332,7 +332,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         }
     }
 
-    public class User {
+    private class User {
 
         @SerializedName("updated_at")
         private String updated_at;
@@ -382,7 +382,6 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
         public final String getPhoto_url() {
             return this.photo_url;
         }
-
 
     }
 
