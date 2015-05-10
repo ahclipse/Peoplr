@@ -18,11 +18,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NameValuePair;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,23 +71,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         activity = this;
         new TagDownloadTask(activity).execute(); // listview? null will be params eventually...
 
-        //DOES THIS WORK THE WAY ITS SUPPOSED TO???
-        //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
-//        GraphRequest request = GraphRequest.newMeRequest(
-//                AccessToken.getCurrentAccessToken(),
-//                new GraphRequest.GraphJSONObjectCallback() {
-//                    @Override
-//                    public void onCompleted(
-//                            JSONObject object,
-//                            GraphResponse response) {
-//                        // Application code
-//                    }
-//                });
-//        Bundle parameters = new Bundle();
-//        parameters.putString("fields", "id,name,email,picture");//access_token?
-//       //I THINK ^^^^ IS ALL I NEED
-//        request.setParameters(parameters);
-//        request.executeAsync();
 
 
         // TODO THIS FIXES THE RUSHING BUG FIGURE OUT A LESS HACKY SOLUTION
