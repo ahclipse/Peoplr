@@ -57,7 +57,7 @@ public class TinderProfile extends Activity implements AdapterView.OnItemClickLi
     startUp s;
     int tagID;
     int[] u;
-    user u2;
+    //user u2;
 
     public static List<User> users;
 

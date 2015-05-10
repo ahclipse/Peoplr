@@ -23,9 +23,9 @@
             android:layout_height="wrap_content"
             android:textSize="30dp"
             android:text="name"
+            android:background="#ffff"
             android:layout_alignBottom="@+id/butt"
-            android:layout_toEndOf="@+id/contactInfo"
-            android:background="#ffff"/>
+            android:layout_centerHorizontal="true" />
 
         <ImageView
 
@@ -49,15 +49,15 @@
             android:layout_margin="20dp"
             android:background="#ffff"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/contactInfo"
-            android:layout_below="@+id/description"
-            android:text="contact info"
-            android:layout_margin="20dp"
-            android:background="#ffff"
-            />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/contactInfo"-->
+            <!--android:layout_below="@+id/description"-->
+            <!--android:text="contact info"-->
+            <!--android:layout_margin="20dp"-->
+            <!--android:background="#ffff"-->
+            <!--/>-->
         <Button
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

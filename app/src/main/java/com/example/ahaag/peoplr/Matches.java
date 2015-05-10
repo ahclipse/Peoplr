@@ -52,11 +52,12 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
     ArrayList<String> list;
     startUp s;
     Matches activity;
-    user currUser;
+     List<Matchee> matchees;
+
 
     int id;
     int[] u;
-    user u2;
+    //user u2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +65,11 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         setContentView(R.layout.activity_matches);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-
+        listview = (ListView) findViewById(R.id.fragmentContainer);
         s = ((startUp) getApplicationContext());
-        currUser.id=s.getUserId();
         activity = this;
         params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("user", Integer.toString(s.getUserId())));
+        params.add(new BasicNameValuePair("user_id", Integer.toString(s.getUserId())));
        new MatchesDownloadTask(3, activity, params).execute();
 
 
@@ -199,194 +199,201 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
         @SerializedName("created_at")
         private String created_at;
 
-        @SerializedName("id")
-        private String id;
 
-        @SerializedName("matchee_id")
-        private String matchee_id;
+        @SerializedName("matched_user_id")
+        private String matched_user_id;
 
-        @SerializedName("matcher_id")
-        private String matcher_id;
+        @SerializedName("matched_user_name")
+        private String matched_user_name;
 
-        @SerializedName("tag_id")
-        private String tag_id;
+        @SerializedName("tag_name")
+        private String tag_name;
 
-        @SerializedName("status")
-        private String status;
+        @SerializedName("matched_user_blurb")
+        private String matched_user_blurb;
 
-        public final Integer getMatcheeID() {
-            return Integer.parseInt(this.matchee_id);
+        @SerializedName("matched_user_photo_url")
+        private String matched_user_profile_url;
+
+        public final String getname() {
+            return matched_user_name;
+        }
+        public final String gettag(){
+            return tag_name;
+        }
+        public final String getBlurb(){
+            return matched_user_blurb;
+        }
+        public final String getPhoto(){
+            return matched_user_profile_url;
         }
 
-        public final Integer getMatcherID() {
-            return Integer.parseInt(this.matcher_id);
+
         }
 
-    }
+        protected void onMatchResponse(String response) {
 
-    protected ArrayList<Integer> onMatchResponse(String response) {
+            Gson gson = new Gson();
 
-        Gson gson = new Gson();
+            String jsonOutput = response.trim();
+            Type listType = new TypeToken<List<Matchee>>() {
+            }.getType();
+             matchees = (List<Matchee>) gson.fromJson(jsonOutput, listType);
 
-        String jsonOutput = response.trim();
-        Type listType = new TypeToken<List<Matchee>>() {
-        }.getType();
-        final List<Matchee> matches = (List<Matchee>) gson.fromJson(jsonOutput, listType);
+            final ArrayList<String> list = new ArrayList<String>();
+            for (int i = 0; i < matchees.size(); i++) {
+                list.add(matchees.get(i).getname()+" ("+matchees.get(i).gettag()+" )");
 
-        final ArrayList<Integer> list = new ArrayList<Integer>();
-        for (Matchee t : matches) {
-            if (t.getMatcheeID()==currUser.id){
-                list.add(t.getMatcherID());
             }
-            else{
-                list.add(t.getMatcheeID());
-            }
-
-        }
-        //new UserDownloadTask(3, activity).execute();
+            //new UserDownloadTask(3, activity).execute();
 
 
-        ArrayAdapter adapter = new ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, list);
-        listview.setAdapter(adapter);
+            ArrayAdapter adapter = new ArrayAdapter(this,
+                    android.R.layout.simple_list_item_1, list);
+            listview.setAdapter(adapter);
 //
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//
-//                String tagName = list.get(position);
-//                Intent nextScreen = new Intent(getApplicationContext(), TinderProfile.class);
-//                nextScreen.putExtra("tag", tagName);
-//                nextScreen.putExtra("id", matches.get(position).getId());
-//                startActivity(nextScreen);
-//            }
-//        });
-        return list;
-    }
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
 
-    class MatchesDownloadTask extends AsyncTask<Void, Void, String> {
+                Matchee m=matchees.get(position);
 
-        int type;
-        List<NameValuePair> params;
-
-        ProgressDialog dialog;
-        Context context;
-        Matches activity;
-
-        // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
-        // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
-
-        public MatchesDownloadTask(int type, Matches activity, List<NameValuePair> params) {
-
-            this.type = type;
-            this.params=params;
-            this.activity = activity;
-            this.context = activity;
-            dialog = new ProgressDialog(context);
-            dialog.setTitle("title");
-            dialog.setMessage("message");
-        }
-
-        protected void onPreExecute() {
-            this.dialog.show();
-        }
-
-        @Override
-        protected String doInBackground(Void... args) {
-            try {
-                return loadFromNetwork("https://peoplr-eisendrachen00-4.c9.io/get_matches", false, params);
-            } catch (IOException e) {
-                return ("Connection error!");
+                Intent nextScreen = new Intent(getApplicationContext(), MatchesProfile.class);
+                nextScreen.putExtra("name", m.getname());
+                nextScreen.putExtra("blurb", m.getBlurb());
+                nextScreen.putExtra("photo_url", m.getPhoto());
+                startActivity(nextScreen);
             }
+        });
+            //return list;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
+        class MatchesDownloadTask extends AsyncTask<Void, Void, String> {
 
-            Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
-            onMatchResponse(result);
-            dialog.dismiss();
-        }
+            int type;
+            List<NameValuePair> params2;
 
-        /**
-         * Initiates the fetch operation.
-         */
-        private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params) throws IOException {
-            InputStream stream = null;
-            String str = "";
-            try {
-                stream = getRequest(url, params);
-                str = readIt(stream, 5000); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
-            } finally {
-                if (stream != null) {
-                    stream.close();
+            ProgressDialog dialog;
+            Context context;
+            Matches activity;
+            int streamLength = 0;
+
+            // http://stackoverflow.com/questions/23267345/how-to-use-spinning-or-wait-icon-when-asynctask-is-being-performed-in-android
+            // http://stackoverflow.com/questions/1270760/passing-a-string-by-reference-in-java?rq=1
+
+            public MatchesDownloadTask(int type, Matches activity, List<NameValuePair> params) {
+
+                this.type = type;
+                this.params2 = params;
+                this.activity = activity;
+                this.context = activity;
+                dialog = new ProgressDialog(context);
+                dialog.setTitle("Loading matches");
+                dialog.setMessage("One moment please");
+
+            }
+
+            protected void onPreExecute() {
+                this.dialog.show();
+            }
+
+            @Override
+            protected String doInBackground(Void... args) {
+                try {
+                    return loadFromNetwork("https://peoplr-eisendrachen00-4.c9.io/get_matches", false, params2);
+                } catch (IOException e) {
+                    return ("Connection error!");
                 }
             }
-            return str;
-        }
 
-        // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
+            @Override
+            protected void onPostExecute(String result) {
 
-        private InputStream getRequest(String urlString, List<NameValuePair> params) throws IOException {
-            // BEGIN_INCLUDE(get_inputstream)
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(20000 /* milliseconds */);
-            conn.setConnectTimeout(20000 /* milliseconds */);
-            conn.setRequestMethod("POST");///I CHANGEd from GET
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getQuery(params));
-            writer.flush();
-            writer.close();
-            // Start the query
-            //getQuery(params);
-            conn.connect();
-            InputStream stream = conn.getInputStream();
-            return stream;
-            // END_INCLUDE(get_inputstream)
-        }
-
-        private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-
-            for (NameValuePair pair : params) {
-                if (first)
-                    first = false;
-                else
-                    result.append("&");
-
-                result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+                Toast.makeText(activity.getApplicationContext(), (String) result, Toast.LENGTH_LONG).show();
+                onMatchResponse(result);
+                dialog.dismiss();
             }
 
-            return result.toString();
-        }
+            /**
+             * Initiates the fetch operation.
+             */
+            private String loadFromNetwork(String url, Boolean isPOST, List<NameValuePair> params2) throws IOException {
+                InputStream stream = null;
+                String str = "";
+                try {
+                    stream = getRequest(url, params2);
+                    str = readIt(stream, streamLength); //TODO ENSURE THAT THIS WORKS FOR ALL LENGTHS YA DUMB
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                }
+                return str;
+            }
 
-        // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+            // ADD NEW GET AND POST STUFF  ---------------------------------------------------------------->
 
-        /**
-         * Reads an InputStream and converts it to a String.
-         *
-         * @param stream InputStream containing HTML from targeted site.
-         * @param len    Length of string that this method returns.
-         * @return String concatenated according to len parameter.
-         * @throws java.io.IOException
-         * @throws java.io.UnsupportedEncodingException
-         */
-        private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-            Reader reader = null;
-            reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[len];
-            reader.read(buffer);
-            return new String(buffer);
-        }
+            private InputStream getRequest(String urlString, List<NameValuePair> params2) throws IOException {
+                // BEGIN_INCLUDE(get_inputstream)
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(50000 /* milliseconds */);
+                conn.setConnectTimeout(50000 /* milliseconds */);
+                conn.setRequestMethod("POST");///I CHANGEd from GET
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getQuery(params2));
+                writer.flush();
+                writer.close();
+                // Start the query
+                //getQuery(params);
+                conn.connect();
+                InputStream stream = conn.getInputStream();
+                streamLength = conn.getContentLength();
+                return stream;
+                // END_INCLUDE(get_inputstream)
+            }
+
+            private String getQuery(List<NameValuePair> params2) throws UnsupportedEncodingException {
+                StringBuilder result = new StringBuilder();
+                boolean first = true;
+
+                for (NameValuePair pair : params2) {
+                    if (first)
+                        first = false;
+                    else
+                        result.append("&");
+
+                    result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+                    result.append("=");
+                    result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+                }
+
+                return result.toString();
+            }
+
+            // END NEW GET AND POST STUFF  ---------------------------------------------------------------->
+
+            /**
+             * Reads an InputStream and converts it to a String.
+             *
+             * @param stream InputStream containing HTML from targeted site.
+             * @param len    Length of string that this method returns.
+             * @return String concatenated according to len parameter.
+             * @throws java.io.IOException
+             * @throws java.io.UnsupportedEncodingException
+             */
+            private String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+                Reader reader = null;
+                reader = new InputStreamReader(stream, "UTF-8");
+                char[] buffer = new char[len];
+                reader.read(buffer);
+                return new String(buffer);
+            }
 
 //        class UserDownloadTask extends AsyncTask<Void, Void, String> {
 //
@@ -436,5 +443,5 @@ public class Matches extends Activity implements AdapterView.OnItemClickListener
 
 
 //        }
-   }
-}
+        }
+    }

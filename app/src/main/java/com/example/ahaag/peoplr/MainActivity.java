@@ -62,12 +62,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         listview = (ListView) findViewById(R.id.fragmentContainer);
 
         MainActivity activity = this;
-        new TagDownloadTask(3, activity).execute(); // listview? null will be params eventually...
-        try {
-            Thread.sleep(30);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+      //  new TagDownloadTask(3, activity).execute(); // listview? null will be params eventually...
+
 
         //DOES THIS WORK THE WAY ITS SUPPOSED TO???
         //DO I NEED TO PUT ANYTHING IN THE APPLICATION CODE
