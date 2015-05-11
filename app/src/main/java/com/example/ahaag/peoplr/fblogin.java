@@ -101,8 +101,8 @@ public class fblogin extends Activity {
                 });
 
 
-        Intent intent = new Intent(context, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(context, MainActivity.class);
+//        startActivity(intent);
 
 
     }
@@ -111,6 +111,8 @@ public class fblogin extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+        Intent intent = new Intent(context, MainActivity.class);
+        startActivity(intent);
     }
 
     private final LocationListener locationListener = new LocationListener() {
